@@ -1,0 +1,6 @@
+{
+  "name": "Nodo Digital Tech",
+  "description": "Plataforma de descargas de software, aplicaciones y juegos con un diseño tecnológico futurista, 100% libre de publicidad.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
