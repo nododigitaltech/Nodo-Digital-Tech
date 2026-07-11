@@ -13,6 +13,9 @@ export interface ProgramVersion {
   changelog: string[];
   downloadUrl: string;
   isBeta?: boolean;
+  megaUrl?: string;
+  driveUrl?: string;
+  mediafireUrl?: string;
 }
 
 export interface Review {
@@ -53,4 +56,7 @@ export interface Program {
   officialUrl?: string;
   downloadType?: string;
   pricing?: { title: string; options: { plan: string; price: string }[] }[];
+  megaUrl?: string;
+  driveUrl?: string;
+  mediafireUrl?: string;
 }

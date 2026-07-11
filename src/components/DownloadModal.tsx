@@ -77,9 +77,21 @@ export const DownloadModal: React.FC<DownloadModalProps> = ({
   const cleanName = program.name.replace(new RegExp(`\\s*${escapedVersion}\\s*`, 'i'), '').trim();
 
   // Enlaces de descarga
-  const megaUrl = "https://mega.nz/file/r4ABADKA#UVPPUuuWqFJWQcdp1Aak3KATj7DH0-T2ADIQDMD8Axw";
-  const driveUrl = "https://drive.google.com/file/d/1_wAW6zRSnUHcxGwt-CA47cJPoym-62v3/view";
-  const mediafireUrl = "https://www.mediafire.com/file/yjoydzchpbp1bj1/Internet_Download_Manager_6.43_Build_3.rar/file";
+  const isIdm = program.id === 'idm';
+  const currentVersionObj = program.versions.find(v => v.version === version);
+  const defaultFallbackUrl = "https://www.youtube.com/@NodoDigitalTech";
+
+  const megaUrl = isIdm
+    ? "https://mega.nz/file/r4ABADKA#UVPPUuuWqFJWQcdp1Aak3KATj7DH0-T2ADIQDMD8Axw"
+    : (currentVersionObj?.megaUrl || program.megaUrl || defaultFallbackUrl);
+
+  const driveUrl = isIdm
+    ? "https://drive.google.com/file/d/1_wAW6zRSnUHcxGwt-CA47cJPoym-62v3/view"
+    : (currentVersionObj?.driveUrl || program.driveUrl || defaultFallbackUrl);
+
+  const mediafireUrl = isIdm
+    ? "https://www.mediafire.com/file/yjoydzchpbp1bj1/Internet_Download_Manager_6.43_Build_3.rar/file"
+    : (currentVersionObj?.mediafireUrl || program.mediafireUrl || defaultFallbackUrl);
 
   const handleMegaClick = (e: React.MouseEvent) => {
     const id = onDownloadStart(program.name, version, size);
