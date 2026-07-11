@@ -24,6 +24,10 @@ export const DownloadModal: React.FC<DownloadModalProps> = ({
 }) => {
   if (!program) return null;
 
+  // Limpiar el nombre del programa para quitar la versión si ya está incluida
+  const escapedVersion = version.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+  const cleanName = program.name.replace(new RegExp(`\\s*${escapedVersion}\\s*`, 'i'), '').trim();
+
   // Enlaces de descarga
   const megaUrl = "https://mega.nz/file/r4ABADKA#UVPPUuuWqFJWQcdp1Aak3KATj7DH0-T2ADIQDMD8Axw";
   const driveUrl = "https://drive.google.com/file/d/1_wAW6zRSnUHcxGwt-CA47cJPoym-62v3/view";
@@ -189,9 +193,9 @@ export const DownloadModal: React.FC<DownloadModalProps> = ({
               {/* Specifications List */}
               <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/10 space-y-2.5 max-w-sm mx-auto">
                 <div className="flex justify-between items-center text-xs font-sans">
-                  <span className="text-slate-500 font-medium">Archivo:</span>
-                  <span className="text-slate-200 font-semibold truncate max-w-[200px]" title={`${program.name} ${version}`}>
-                    {program.name}
+                  <span className="text-slate-500 font-medium">Programa:</span>
+                  <span className="text-slate-200 font-semibold truncate max-w-[200px]" title={cleanName}>
+                    {cleanName}
                   </span>
                 </div>
                 <div className="flex justify-between items-center text-xs font-sans">
