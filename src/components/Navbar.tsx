@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { ProgramIcon } from './ProgramIcon';
 import { motion, AnimatePresence } from 'motion/react';
+import { mockPrograms } from '../data/programs';
 
 interface NavbarProps {
   activeCategory: string;
@@ -8,6 +9,7 @@ interface NavbarProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   onLogoClick: () => void;
+  onSelectProgram: (id: string) => void;
   downloadHistory: {
     id: string;
     programName: string;
@@ -25,10 +27,52 @@ export const Navbar: React.FC<NavbarProps> = ({
   searchQuery,
   setSearchQuery,
   onLogoClick,
+  onSelectProgram,
   downloadHistory,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showHistoryDropdown, setShowHistoryDropdown] = useState(false);
+
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const desktopSearchRef = useRef<HTMLDivElement>(null);
+  const mobileSearchRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        (desktopSearchRef.current && !desktopSearchRef.current.contains(event.target as Node)) &&
+        (mobileSearchRef.current && !mobileSearchRef.current.contains(event.target as Node))
+      ) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const matchingPrograms = useMemo(() => {
+    if (!searchQuery.trim()) return [];
+    const query = searchQuery.toLowerCase().trim();
+    return mockPrograms.filter(p => 
+      p.name.toLowerCase().includes(query) ||
+      p.subtitle.toLowerCase().includes(query) ||
+      p.category.toLowerCase().includes(query) ||
+      p.subcategory.toLowerCase().includes(query) ||
+      p.developer.toLowerCase().includes(query)
+    ).slice(0, 6);
+  }, [searchQuery]);
+
+  const showDropdown = isDropdownOpen && searchQuery.trim() !== '';
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      // Go back to main list to show search results
+      onLogoClick();
+      setIsDropdownOpen(false);
+      (e.target as HTMLInputElement).blur();
+    }
+  };
 
   const categories = [
     { id: 'All', label: 'Inicio' },
@@ -39,6 +83,77 @@ export const Navbar: React.FC<NavbarProps> = ({
   ];
 
   const activeDownloads = downloadHistory.filter((d) => d.status === 'downloading');
+
+  const renderSearchDropdown = () => {
+    if (!showDropdown) return null;
+    return (
+      <AnimatePresence>
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 10 }}
+          className="absolute top-full left-0 right-0 mt-2 bg-[#09090b]/95 backdrop-blur-2xl border border-cyan-500/20 rounded-xl overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.9)] z-50 divide-y divide-white/[0.06] max-h-80 overflow-y-auto"
+        >
+          {matchingPrograms.length > 0 ? (
+            <>
+              <div className="px-3 py-1.5 bg-cyan-950/20 text-[10px] font-bold text-cyan-400 tracking-wider uppercase font-sans">
+                Resultados coincidentes
+              </div>
+              {matchingPrograms.map((prog) => (
+                <div
+                  key={prog.id}
+                  onClick={() => {
+                    onSelectProgram(prog.id);
+                    setSearchQuery('');
+                    setIsDropdownOpen(false);
+                  }}
+                  className="flex items-center space-x-3 p-3 hover:bg-cyan-500/10 cursor-pointer transition-all duration-200 text-left"
+                >
+                  <img
+                    src={prog.icon}
+                    alt={prog.name}
+                    referrerPolicy="no-referrer"
+                    className="w-8 h-8 rounded-lg object-cover bg-slate-900 border border-white/10 shrink-0"
+                  />
+                  <div className="flex-grow min-w-0">
+                    <h4 className="text-xs font-semibold text-white truncate font-sans">{prog.name}</h4>
+                    <p className="text-[10px] text-slate-400 truncate font-sans">{prog.category} • {prog.subcategory}</p>
+                  </div>
+                  <ProgramIcon name="ArrowLeft" size={12} className="text-cyan-500/60 rotate-180 shrink-0" />
+                </div>
+              ))}
+              <div
+                onClick={() => {
+                  onLogoClick();
+                  setIsDropdownOpen(false);
+                }}
+                className="p-2.5 text-center text-[11px] font-semibold text-cyan-400 hover:text-white hover:bg-cyan-500/10 cursor-pointer transition-all duration-200 flex items-center justify-center space-x-1.5"
+              >
+                <ProgramIcon name="Search" size={11} />
+                <span>Ver todos los resultados (Presiona Enter)</span>
+              </div>
+            </>
+          ) : (
+            <div className="p-4 text-center">
+              <p className="text-xs text-slate-400 font-sans">
+                Sin coincidencias exactas para "<span className="text-cyan-400 font-medium">{searchQuery}</span>"
+              </p>
+              <button
+                onClick={() => {
+                  onLogoClick();
+                  setIsDropdownOpen(false);
+                }}
+                className="mt-2 w-full py-1.5 px-3 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-[11px] font-semibold text-cyan-400 hover:text-white transition-all duration-200 flex items-center justify-center space-x-1"
+              >
+                <ProgramIcon name="RefreshCw" size={11} />
+                <span>Buscar programas similares</span>
+              </button>
+            </div>
+          )}
+        </motion.div>
+      </AnimatePresence>
+    );
+  };
 
   return (
     <nav id="navbar-main" className="fixed top-0 left-0 right-0 z-50 bg-[#050505]/80 backdrop-blur-xl border-b border-white/[0.08] transition-all duration-300">
@@ -92,7 +207,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Search bar, Download center & Mobile menu */}
           <div className="flex items-center space-x-4">
             {/* Nav Search Box (Hidden on small mobile) */}
-            <div className="hidden sm:block relative w-48 lg:w-64">
+            <div className="hidden sm:block relative w-48 lg:w-64" ref={desktopSearchRef}>
               <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                 <ProgramIcon name="Search" className="text-slate-500" size={15} />
               </span>
@@ -101,18 +216,27 @@ export const Navbar: React.FC<NavbarProps> = ({
                 type="text"
                 placeholder="Buscar programa..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 focus:border-cyan-500/50 text-slate-200 text-xs rounded-lg pl-9 pr-3 py-1.5 outline-none focus:ring-1 focus:ring-cyan-500/30 placeholder-slate-500 transition-all font-sans"
+                onFocus={() => setIsDropdownOpen(true)}
+                onKeyDown={handleKeyDown}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setIsDropdownOpen(true);
+                }}
+                className="w-full bg-white/5 border border-white/10 focus:border-cyan-500/50 text-slate-200 text-xs rounded-lg pl-9 pr-8 py-1.5 outline-none focus:ring-1 focus:ring-cyan-500/30 placeholder-slate-500 transition-all font-sans"
               />
               {searchQuery && (
                 <button
                   id="navbar-clear-search"
-                  onClick={() => setSearchQuery('')}
+                  onClick={() => {
+                    setSearchQuery('');
+                    setIsDropdownOpen(false);
+                  }}
                   className="absolute inset-y-0 right-0 flex items-center pr-2.5 text-slate-400 hover:text-white"
                 >
                   <ProgramIcon name="X" size={13} />
                 </button>
               )}
+              {renderSearchDropdown()}
             </div>
 
             {/* Mobile menu trigger */}
@@ -138,7 +262,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             className="md:hidden bg-[#050505] border-b border-white/10 px-4 pt-2 pb-4 space-y-3"
           >
             {/* Mobile Search Box */}
-            <div className="relative">
+            <div className="relative" ref={mobileSearchRef}>
               <span className="absolute inset-y-0 left-0 flex items-center pl-3">
                 <ProgramIcon name="Search" className="text-slate-500" size={15} />
               </span>
@@ -147,18 +271,27 @@ export const Navbar: React.FC<NavbarProps> = ({
                 type="text"
                 placeholder="Buscar programa..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => setIsDropdownOpen(true)}
+                onKeyDown={handleKeyDown}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setIsDropdownOpen(true);
+                }}
                 className="w-full bg-white/5 border border-white/10 focus:border-cyan-500/50 text-slate-200 text-xs rounded-lg pl-9 pr-8 py-2 outline-none"
               />
               {searchQuery && (
                 <button
                   id="navbar-clear-search-mobile"
-                  onClick={() => setSearchQuery('')}
+                  onClick={() => {
+                    setSearchQuery('');
+                    setIsDropdownOpen(false);
+                  }}
                   className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400"
                 >
                   <ProgramIcon name="X" size={14} />
                 </button>
               )}
+              {renderSearchDropdown()}
             </div>
 
             {/* Mobile Categories list */}

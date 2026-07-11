@@ -37,8 +37,6 @@ export const ProgramIcon: React.FC<ProgramIconProps> = ({ name, className = '', 
     Download: LucideIcons.Download,
     CheckCircle: LucideIcons.CheckCircle,
     Windows: LucideIcons.Laptop, // Fallback representing OS
-    macOS: LucideIcons.Apple,
-    Linux: LucideIcons.Terminal,
     Android: LucideIcons.Smartphone,
     iOS: LucideIcons.Smartphone,
     ArrowLeft: LucideIcons.ArrowLeft,

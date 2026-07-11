@@ -30,7 +30,7 @@ export const ProgramDetail: React.FC<ProgramDetailProps> = ({
   const handleShare = () => {
     const programSlug = slugify(program.name);
     const origin = window.location.origin && window.location.origin !== 'null' ? window.location.origin : window.location.protocol + '//' + window.location.host;
-    const cleanUrl = `${origin}/programa/${programSlug}`;
+    const cleanUrl = `${origin}/?program=${programSlug}`;
 
     const performCopy = (text: string): Promise<boolean> => {
       return new Promise((resolve) => {
@@ -119,9 +119,16 @@ export const ProgramDetail: React.FC<ProgramDetailProps> = ({
               <h1 id="detail-program-title" className="text-2xl sm:text-4xl font-sans font-extrabold tracking-tight text-white">
                 {program.name}
               </h1>
-              <p className="text-slate-400 text-xs sm:text-sm font-sans max-w-xl">
-                Desarrollado por <span className="text-slate-200 font-semibold">{program.developer}</span>
-              </p>
+              <div className="flex flex-wrap items-center gap-y-1 gap-x-2.5 text-slate-400 text-xs sm:text-sm font-sans max-w-xl">
+                <span>
+                  Desarrollado por <span className="text-slate-200 font-semibold">{program.developer}</span>
+                </span>
+                <span className="text-slate-600 select-none">•</span>
+                <span className="flex items-center space-x-1">
+                  <span>Lanzamiento:</span>
+                  <span className="text-cyan-400 font-semibold font-mono">{program.updateDate}</span>
+                </span>
+              </div>
             </div>
           </div>
 
@@ -537,6 +544,12 @@ export const ProgramDetail: React.FC<ProgramDetailProps> = ({
                 <span className="text-slate-500 font-medium">Peso:</span>
                 <span className="text-slate-350 font-mono font-semibold text-[11px]">
                   {program.size}
+                </span>
+              </div>
+              <div className="flex justify-between items-center text-xs font-sans">
+                <span className="text-slate-500 font-medium">Lanzamiento:</span>
+                <span className="text-slate-350 font-mono font-semibold text-[11px]">
+                  {program.updateDate}
                 </span>
               </div>
             </div>

@@ -88,6 +88,11 @@ export default function App() {
     }
   }, [selectedProgramId]);
 
+  // Scroll to top when opening/closing a program
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }, [selectedProgramId]);
+
   // Download Simulation Tracker
   const [downloadHistory, setDownloadHistory] = useState<{
     id: string;
@@ -201,9 +206,9 @@ export default function App() {
     return programs.find((p) => p.id === selectedProgramId) || null;
   }, [programs, selectedProgramId]);
 
-  // Filtered Programs list
+  // Filtered Programs list sorted by updateDate descending (Últimas Actualizaciones)
   const filteredPrograms = useMemo(() => {
-    return programs.filter((prog) => {
+    const result = programs.filter((prog) => {
       // Category Filter
       if (activeCategory !== 'All' && prog.category !== activeCategory) {
         return false;
@@ -228,12 +233,14 @@ export default function App() {
 
       return true;
     });
+
+    return result.sort((a, b) => new Date(b.updateDate).getTime() - new Date(a.updateDate).getTime());
   }, [programs, activeCategory, selectedOS, searchQuery]);
 
-  // Featured programs (subset of highest rated ones)
+  // Featured programs (sorted by download count descending as requested)
   const featuredPrograms = useMemo(() => {
     return [...programs]
-      .sort((a, b) => b.rating - a.rating || b.downloads - a.downloads)
+      .sort((a, b) => b.downloads - a.downloads)
       .slice(0, 3);
   }, [programs]);
 
@@ -247,6 +254,7 @@ export default function App() {
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         onLogoClick={() => setSelectedProgramId(null)}
+        onSelectProgram={setSelectedProgramId}
         downloadHistory={downloadHistory}
       />
 
@@ -289,7 +297,7 @@ export default function App() {
                   {/* Compatibility OS Pills */}
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="text-[10px] font-mono tracking-wider font-bold text-slate-500 uppercase mr-1">Compatibilidad:</span>
-                    {['All', 'Windows', 'macOS', 'Linux', 'Android'].map((os) => (
+                    {['All', 'Windows', 'Android'].map((os) => (
                       <button
                         id={`os-filter-${os}`}
                         key={os}

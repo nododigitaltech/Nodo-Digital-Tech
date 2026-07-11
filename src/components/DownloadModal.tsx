@@ -30,7 +30,7 @@ export const DownloadModal: React.FC<DownloadModalProps> = ({
   const handleShare = () => {
     const programSlug = slugify(program.name);
     const origin = window.location.origin && window.location.origin !== 'null' ? window.location.origin : window.location.protocol + '//' + window.location.host;
-    const cleanUrl = `${origin}/programa/${programSlug}`;
+    const cleanUrl = `${origin}/?program=${programSlug}`;
 
     const performCopy = (text: string): Promise<boolean> => {
       return new Promise((resolve) => {

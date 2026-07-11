@@ -85,8 +85,54 @@ export const mockPrograms: Program[] = rawPrograms.map((p) => {
     }
   }
 
+  // Remove all trace of macOS / Mac and Linux from compatibility, requirements, and text
+  const compatibility = (p.compatibility || []).filter((os) => os !== 'macOS' && os !== 'Linux');
+
+  const cleanText = (str: string) => {
+    if (!str) return '';
+    return str
+      .replace(/,\s*macOS/gi, '')
+      .replace(/,\s*mac/gi, '')
+      .replace(/,\s*Linux/gi, '')
+      .replace(/macOS\s*,\s*/gi, '')
+      .replace(/mac\s*,\s*/gi, '')
+      .replace(/Linux\s*,\s*/gi, '')
+      .replace(/ \/ macOS[^\/]*|macOS \/ | \/ macOS|macOS/gi, '')
+      .replace(/ \/ mac[^\/]*|mac \/ | \/ mac|mac/gi, '')
+      .replace(/ \/ Linux[^\/]*|Linux \/ | \/ Linux|Linux/gi, '')
+      .replace(/sistemas operativos \(Windows, Linux, macOS\)/gi, 'sistemas operativos (Windows)')
+      .replace(/sistemas operativos \(Windows, Linux\)/gi, 'sistemas operativos (Windows)')
+      .trim();
+  };
+
+  const requirements = p.requirements ? {
+    minimum: {
+      ...p.requirements.minimum,
+      os: cleanText(p.requirements.minimum.os)
+    },
+    recommended: {
+      ...p.requirements.recommended,
+      os: cleanText(p.requirements.recommended.os)
+    }
+  } : p.requirements;
+
+  const subtitle = cleanText(p.subtitle);
+  const description = cleanText(p.description);
+  const detailedDescription = cleanText(p.detailedDescription);
+
+  const versions = p.versions ? p.versions.map((v) => ({
+    ...v,
+    changelog: v.changelog ? v.changelog.map(cleanText).filter(Boolean) : []
+  })) : p.versions;
+
   return {
     ...p,
+    compatibility,
+    requirements,
+    subtitle,
+    description,
+    detailedDescription,
+    versions,
     format,
     fileType,
     language,

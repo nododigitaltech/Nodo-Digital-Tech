@@ -227,7 +227,7 @@ export const programsPart1: Program[] = [
     size: '11.8 MB',
     latestVersion: '6.43 Build 3',
     compatibility: ['Windows'],
-    updateDate: '2026-07-04',
+    updateDate: '2026-07-09',
     developer: 'Tonec Inc.',
     license: 'De Pago',
     format: 'Instalador Oficial',
