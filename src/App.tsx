@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { mockPrograms } from './data/programs';
 import { Program } from './types';
 import { Navbar } from './components/Navbar';
@@ -8,6 +8,7 @@ import { ProgramDetail } from './components/ProgramDetail';
 import { DownloadModal } from './components/DownloadModal';
 import { ProgramIcon } from './components/ProgramIcon';
 import { motion, AnimatePresence } from 'motion/react';
+import { slugify } from './utils/slugify';
 
 export default function App() {
   // Reactive list of programs in state
@@ -20,6 +21,72 @@ export default function App() {
 
   // Navigation State
   const [selectedProgramId, setSelectedProgramId] = useState<string | null>(null);
+
+  // Synchronize program details view with URL query parameters/paths for sharing
+  useEffect(() => {
+    const handleUrlRoute = () => {
+      const pathname = window.location.pathname;
+      const params = new URLSearchParams(window.location.search);
+      
+      let targetSlug = '';
+      
+      // 1. Check if pathname matches /programa/some-slug
+      const pathMatch = pathname.match(/\/programa\/([^/]+)/);
+      if (pathMatch) {
+        targetSlug = decodeURIComponent(pathMatch[1]);
+      } else {
+        // 2. Fallback to query parameter 'program' or hash
+        targetSlug = params.get('program') || window.location.hash.replace('#', '');
+      }
+
+      if (targetSlug) {
+        const decodedParam = targetSlug.toLowerCase();
+        // Try to find by exact ID, name slug, or id slug
+        const found = mockPrograms.find(p => 
+          p.id.toLowerCase() === decodedParam || 
+          slugify(p.name) === decodedParam || 
+          slugify(p.id) === decodedParam
+        );
+        
+        if (found) {
+          setSelectedProgramId(found.id);
+          return;
+        }
+      }
+      
+      setSelectedProgramId(null);
+    };
+
+    handleUrlRoute();
+
+    window.addEventListener('popstate', handleUrlRoute);
+    return () => window.removeEventListener('popstate', handleUrlRoute);
+  }, []);
+
+  useEffect(() => {
+    const pathname = window.location.pathname;
+    const url = new URL(window.location.href);
+    
+    if (selectedProgramId) {
+      const program = mockPrograms.find(p => p.id === selectedProgramId);
+      if (program) {
+        const programSlug = slugify(program.name);
+        const targetPath = `/programa/${programSlug}`;
+        
+        if (pathname !== targetPath) {
+          url.pathname = targetPath;
+          url.searchParams.delete('program'); // Clean up old parameter
+          window.history.pushState(null, '', url.toString());
+        }
+      }
+    } else {
+      if (pathname !== '/' && pathname.startsWith('/programa')) {
+        url.pathname = '/';
+        url.searchParams.delete('program');
+        window.history.pushState(null, '', url.toString());
+      }
+    }
+  }, [selectedProgramId]);
 
   // Download Simulation Tracker
   const [downloadHistory, setDownloadHistory] = useState<{

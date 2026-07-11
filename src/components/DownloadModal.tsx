@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Program } from '../types';
 import { ProgramIcon } from './ProgramIcon';
 import { motion, AnimatePresence } from 'motion/react';
+import { slugify } from '../utils/slugify';
 
 interface DownloadModalProps {
   isOpen: boolean;
@@ -23,6 +24,53 @@ export const DownloadModal: React.FC<DownloadModalProps> = ({
   onDownloadProgress,
 }) => {
   if (!program) return null;
+
+  const [copied, setCopied] = useState(false);
+
+  const handleShare = () => {
+    const programSlug = slugify(program.name);
+    const origin = window.location.origin && window.location.origin !== 'null' ? window.location.origin : window.location.protocol + '//' + window.location.host;
+    const cleanUrl = `${origin}/programa/${programSlug}`;
+
+    const performCopy = (text: string): Promise<boolean> => {
+      return new Promise((resolve) => {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text)
+            .then(() => resolve(true))
+            .catch(() => resolve(fallbackCopy(text)));
+        } else {
+          resolve(fallbackCopy(text));
+        }
+      });
+    };
+
+    const fallbackCopy = (text: string): boolean => {
+      try {
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.top = '0';
+        textArea.style.left = '0';
+        textArea.style.opacity = '0';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textArea);
+        return successful;
+      } catch (err) {
+        console.error('Fallback copy failed:', err);
+        return false;
+      }
+    };
+
+    performCopy(cleanUrl).then((success) => {
+      if (success) {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }
+    });
+  };
 
   // Limpiar el nombre del programa para quitar la versión si ya está incluida
   const escapedVersion = version.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
@@ -228,13 +276,27 @@ export const DownloadModal: React.FC<DownloadModalProps> = ({
 
               {/* Footnote and Close Action */}
               <div className="space-y-2.5 pt-1">
-                <button
-                  id="modal-close-action-btn"
-                  onClick={onClose}
-                  className="w-full py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 font-bold text-xs rounded-xl transition-all cursor-pointer font-sans"
-                >
-                  Volver al programa
-                </button>
+                <div className="grid grid-cols-2 gap-3 max-w-sm mx-auto">
+                  <button
+                    id="modal-close-action-btn"
+                    onClick={onClose}
+                    className="py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 font-bold text-xs rounded-xl transition-all cursor-pointer font-sans"
+                  >
+                    Volver
+                  </button>
+                  <button
+                    id="modal-share-action-btn"
+                    onClick={handleShare}
+                    className={`py-2.5 border font-bold text-xs rounded-xl transition-all cursor-pointer font-sans flex items-center justify-center space-x-1.5 select-none ${
+                      copied
+                        ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.15)]'
+                        : 'bg-white/5 border-white/10 text-slate-200 hover:text-white hover:bg-white/10 hover:border-cyan-500/30'
+                    }`}
+                  >
+                    <ProgramIcon name={copied ? 'Check' : 'Share2'} size={12} className={copied ? 'text-emerald-400 shrink-0' : 'text-cyan-400 shrink-0'} />
+                    <span>{copied ? '¡Copiado!' : 'Compartir'}</span>
+                  </button>
+                </div>
                 <p className="text-[9px] text-slate-500 text-center font-sans leading-normal">
                   NodoSafe protege tu navegación. Todos nuestros enlaces son escaneados y verificados diariamente.
                 </p>

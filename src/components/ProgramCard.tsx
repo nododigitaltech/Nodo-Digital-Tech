@@ -2,6 +2,7 @@ import React from 'react';
 import { Program } from '../types';
 import { ProgramIcon } from './ProgramIcon';
 import { motion } from 'motion/react';
+import { slugify } from '../utils/slugify';
 
 interface ProgramCardProps {
   program: Program;
@@ -9,13 +10,22 @@ interface ProgramCardProps {
 }
 
 export const ProgramCard: React.FC<ProgramCardProps> = ({ program, onSelect }) => {
+  const programSlug = slugify(program.name);
+  const href = `/programa/${programSlug}`;
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    onSelect(program.id);
+  };
+
   return (
-    <motion.div
+    <motion.a
       id={`program-card-${program.id}`}
+      href={href}
       whileHover={{ y: -4, scale: 1.01 }}
       transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-      onClick={() => onSelect(program.id)}
-      className="group relative flex flex-col justify-between h-[340px] rounded-2xl glass glass-hover p-5 cursor-pointer overflow-hidden transition-all duration-300 shadow-md hover:shadow-[0_0_25px_rgba(34,211,238,0.15)]"
+      onClick={handleClick}
+      className="group relative flex flex-col justify-between h-[340px] rounded-2xl glass glass-hover p-5 cursor-pointer overflow-hidden transition-all duration-300 shadow-md hover:shadow-[0_0_25px_rgba(34,211,238,0.15)] block no-underline"
     >
       {/* Background glow hover effect */}
       <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-cyan-500/10 to-transparent blur-2xl group-hover:from-cyan-500/20 transition-all duration-300 pointer-events-none" />
@@ -78,14 +88,14 @@ export const ProgramCard: React.FC<ProgramCardProps> = ({ program, onSelect }) =
         </div>
 
         {/* View Detail Trigger */}
-        <button
+        <span
           id={`view-detail-btn-${program.id}`}
           className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-lg bg-cyan-950/20 border border-cyan-500/20 text-cyan-400 text-xs font-semibold group-hover:bg-cyan-500 group-hover:text-slate-950 group-hover:border-transparent transition-all duration-300 font-sans shadow-xs"
         >
           <span>Instalar</span>
           <ProgramIcon name="ArrowLeft" className="transform rotate-180 transition-transform group-hover:translate-x-0.5" size={12} />
-        </button>
+        </span>
       </div>
-    </motion.div>
+    </motion.a>
   );
 };

@@ -54,6 +54,9 @@ export const ProgramIcon: React.FC<ProgramIconProps> = ({ name, className = '', 
     Filter: LucideIcons.Filter,
     Activity: LucideIcons.Activity,
     AlertCircle: LucideIcons.AlertTriangle,
+    Share2: LucideIcons.Share2,
+    Check: LucideIcons.Check,
+    Copy: LucideIcons.Copy,
   };
 
   const IconComponent = iconMap[name] || LucideIcons.HelpCircle;

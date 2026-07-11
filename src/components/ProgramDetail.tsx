@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Program, ProgramVersion } from '../types';
 import { ProgramIcon } from './ProgramIcon';
 import { motion, AnimatePresence } from 'motion/react';
+import { slugify } from '../utils/slugify';
 
 interface ProgramDetailProps {
   program: Program;
@@ -24,6 +25,52 @@ export const ProgramDetail: React.FC<ProgramDetailProps> = ({
   const [reportedBroken, setReportedBroken] = useState(false);
   const [showSecurityCheck, setShowSecurityCheck] = useState(false);
   const [showFullChangelog, setShowFullChangelog] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const handleShare = () => {
+    const programSlug = slugify(program.name);
+    const origin = window.location.origin && window.location.origin !== 'null' ? window.location.origin : window.location.protocol + '//' + window.location.host;
+    const cleanUrl = `${origin}/programa/${programSlug}`;
+
+    const performCopy = (text: string): Promise<boolean> => {
+      return new Promise((resolve) => {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text)
+            .then(() => resolve(true))
+            .catch(() => resolve(fallbackCopy(text)));
+        } else {
+          resolve(fallbackCopy(text));
+        }
+      });
+    };
+
+    const fallbackCopy = (text: string): boolean => {
+      try {
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.top = '0';
+        textArea.style.left = '0';
+        textArea.style.opacity = '0';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textArea);
+        return successful;
+      } catch (err) {
+        console.error('Fallback copy failed:', err);
+        return false;
+      }
+    };
+
+    performCopy(cleanUrl).then((success) => {
+      if (success) {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }
+    });
+  };
 
   // Review Form States
   const [reviewName, setReviewName] = useState('');
@@ -361,7 +408,7 @@ export const ProgramDetail: React.FC<ProgramDetailProps> = ({
             </div>
 
             {/* Action buttons */}
-            <div className="space-y-3.5">
+            <div className="space-y-3">
               {/* Primary Download Button */}
               <button
                 id="main-download-button"
@@ -372,19 +419,36 @@ export const ProgramDetail: React.FC<ProgramDetailProps> = ({
                 <span>Descargar {selectedVersion.version} ({selectedVersion.size})</span>
               </button>
 
-              {/* Official Page Button */}
-              {program.officialUrl && (
-                <a
-                  id="official-page-button"
-                  href={program.officialUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full py-2.5 px-4 rounded-xl bg-white/5 border border-white/10 text-slate-200 hover:text-white hover:bg-white/10 hover:border-cyan-500/30 transition-all flex items-center justify-center space-x-2 cursor-pointer font-sans text-xs font-semibold"
+              {/* Extra actions container */}
+              <div className="grid grid-cols-2 gap-3">
+                {/* Official Page Button */}
+                {program.officialUrl ? (
+                  <a
+                    id="official-page-button"
+                    href={program.officialUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="py-2.5 px-3 rounded-xl bg-white/5 border border-white/10 text-slate-200 hover:text-white hover:bg-white/10 hover:border-cyan-500/30 transition-all flex items-center justify-center space-x-2 cursor-pointer font-sans text-xs font-semibold text-center truncate"
+                  >
+                    <ProgramIcon name="Cpu" size={14} className="text-cyan-400 shrink-0" />
+                    <span>Página Oficial</span>
+                  </a>
+                ) : null}
+
+                {/* Share Button */}
+                <button
+                  id="share-program-button"
+                  onClick={handleShare}
+                  className={`py-2.5 px-3 rounded-xl border transition-all flex items-center justify-center space-x-2 cursor-pointer font-sans text-xs font-semibold select-none ${
+                    copied
+                      ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.15)]'
+                      : 'bg-white/5 border-white/10 text-slate-200 hover:text-white hover:bg-white/10 hover:border-cyan-500/30'
+                  } ${!program.officialUrl ? 'col-span-2' : ''}`}
                 >
-                  <ProgramIcon name="Cpu" size={14} className="text-cyan-400" />
-                  <span>Visitar Página Oficial</span>
-                </a>
-              )}
+                  <ProgramIcon name={copied ? 'Check' : 'Share2'} size={14} className={copied ? 'text-emerald-400 shrink-0' : 'text-cyan-400 shrink-0'} />
+                  <span>{copied ? '¡Copiado!' : 'Compartir'}</span>
+                </button>
+              </div>
 
               <div className="p-3 rounded-xl bg-emerald-500/5 border border-emerald-500/10 flex items-center space-x-2.5 text-left">
                 <ProgramIcon name="Shield" className="text-emerald-400 shrink-0" size={18} />
