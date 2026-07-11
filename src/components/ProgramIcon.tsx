@@ -8,6 +8,19 @@ interface ProgramIconProps {
 }
 
 export const ProgramIcon: React.FC<ProgramIconProps> = ({ name, className = '', size }) => {
+  // If the name is an image path or URL, render it directly as an image
+  if (name && (name.startsWith('/') || name.startsWith('http') || name.includes('.'))) {
+    return (
+      <img
+        src={name}
+        alt="Logo"
+        className={`object-contain rounded-xl ${className}`}
+        style={size ? { width: size, height: size } : undefined}
+        referrerPolicy="no-referrer"
+      />
+    );
+  }
+
   // Safe mapping of expected icons
   const iconMap: { [key: string]: React.ComponentType<any> } = {
     Code: LucideIcons.Code,

@@ -217,26 +217,33 @@ export const programsPart1: Program[] = [
   },
   {
     id: 'idm',
-    name: 'Internet Download Manager',
+    name: 'Internet Download Manager 6.43 Build 3',
     subtitle: 'El acelerador de descargas más popular del mercado',
     category: 'Utilidades',
     subcategory: 'Gestor de Descargas',
-    icon: 'Download',
+    icon: 'https://i0.wp.com/webkumal.com/storage/2023/03/idm.webp?fit=200%2C200&ssl=1',
     rating: 4.8,
     downloads: 412000,
-    size: '11 MB',
-    latestVersion: 'v6.43 Build 3',
+    size: '11.8 MB',
+    latestVersion: '6.43 Build 3',
     compatibility: ['Windows'],
     updateDate: '2026-07-04',
     developer: 'Tonec Inc.',
-    license: 'Prueba / Premium',
-    description: 'Internet Download Manager (IDM) acelera tus descargas hasta 5 veces gracias a su tecnología de segmentación dinámica de archivos inteligente.',
-    detailedDescription: 'IDM se integra a la perfección con Chrome, Edge, Firefox y otros navegadores populares. Captura enlaces multimedia automáticamente, permitiendo reanudar descargas interrumpidas por pérdida de conexión o caídas de red.',
+    license: 'De Pago',
+    format: 'Instalador Oficial',
+    fileType: 'RAR',
+    language: 'Español',
+    downloadType: 'Gratis',
+    officialUrl: 'https://www.internetdownloadmanager.com/',
+    description: 'Internet Download Manager (IDM) es una herramienta potente y fácil de usar diseñada para aumentar la velocidad de tus descargas hasta 8 veces, organizar archivos y recuperar descargas interrumpidas.',
+    detailedDescription: 'Gracias a su innovadora tecnología de segmentación dinámica inteligente de archivos, IDM divide el contenido en partes durante el proceso de descarga y reutiliza las conexiones disponibles sin fases adicionales de inicio de sesión, garantizando el máximo rendimiento en todo momento.\n\nYa sea que descargues archivos pesados, música, software o videos, Internet Download Manager optimiza el uso de tu ancho de banda para ofrecerte una experiencia rápida, segura y sin interrupciones.',
     features: [
-      'Segmentación dinámica avanzada de archivos que acelera la descarga hasta un 500%.',
-      'Integración total con navegadores mediante la extensión oficial IDM Integration Module.',
-      'Programador de descargas automatizado para gestionar colas en horas de menor tráfico.',
-      'Capacidad de reanudación robusta para archivos incompletos o conexiones cortadas.'
+      'Aceleración de velocidad extrema: Multiplica la velocidad de tus descargas mediante un motor lógico inteligente de descarga por partes.',
+      'Recuperación y continuación de descargas: ¿Se cortó el internet o se apagó la computadora? No te preocupes. IDM reanuda las descargas interrumpidas o rotas desde el punto exacto donde se detuvieron, evitando que tengas que empezar de cero.',
+      'Integración perfecta con navegadores: Se acopla de manera automática y fluida en Microsoft Edge, Google Chrome, Mozilla Firefox, Opera y muchos más para capturar y gestionar tus descargas al instante.',
+      'Descarga de videos en línea: Detecta automáticamente contenido multimedia y videos en reproductores web para que puedas descargarlos con un solo clic.',
+      'Programador de tareas integrado (Scheduler): Te permite programar IDM para conectarse a una hora específica, descargar los archivos que deseas, desconectarse o incluso apagar la PC al finalizar.',
+      'Organización y categorías: Clasifica automáticamente tus descargas en categorías personalizadas para mantener tus archivos siempre en orden.'
     ],
     requirements: {
       minimum: {
@@ -254,25 +261,30 @@ export const programsPart1: Program[] = [
     },
     versions: [
       {
-        version: 'v6.43 Build 3',
+        version: '6.43 Build 3',
         releaseDate: '2026-07-04',
-        size: '11.2 MB',
+        size: '11.8 MB',
         changelog: [
-          'Soporte de descarga optimizado para servidores de video streaming protegidos con TLS 1.3.',
-          'Corrección del problema de integración de la barra de descarga en las últimas versiones beta de Google Chrome.',
-          'Estabilización de velocidad de segmentación en conexiones de fibra de más de 1Gbps.'
+          'Se solucionó un problema que provocaba que el panel de descargas de IDM no apareciera en some sitios web.',
+          'Se han solucionado problemas relacionados con el proxy/VPN que impedían que apareciera el panel "Descargar este vídeo" o provocaban errores 403 en algunos sitios web.'
         ],
-        downloadUrl: 'https://www.internetdownloadmanager.com/download.html'
+        downloadUrl: 'https://mega.nz/file/r4ABADKA#UVPPUuuWqFJWQcdp1Aak3KATj7DH0-T2ADIQDMD8Axw'
+      }
+    ],
+    pricing: [
+      {
+        title: 'Opciones para 1 PC',
+        options: [
+          { plan: 'Licencia de 1 año (para 1 PC)', price: '$11.95 USD' },
+          { plan: 'Licencia de por vida (para 1 PC)', price: '$24.95 USD' }
+        ]
       },
       {
-        version: 'v6.42 Build 2',
-        releaseDate: '2026-05-18',
-        size: '10.9 MB',
-        changelog: [
-          'Mejorada la captura de descargas HTTPS redirigidas por proxies seguros.',
-          'Parches menores de estabilidad interna.'
-        ],
-        downloadUrl: 'https://www.internetdownloadmanager.com/download.html'
+        title: 'Opciones para 2 o más PCs',
+        options: [
+          { plan: 'Licencia de 1 año (para cada PC)', price: '$9.95 USD' },
+          { plan: 'Licencia de por vida (para cada PC)', price: '$19.95 USD' }
+        ]
       }
     ],
     reviews: [

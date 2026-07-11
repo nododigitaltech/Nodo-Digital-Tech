@@ -47,4 +47,10 @@ export interface Program {
   updateDate: string;
   developer: string;
   license: string;
+  format?: string;
+  fileType?: string;
+  language?: string;
+  officialUrl?: string;
+  downloadType?: string;
+  pricing?: { title: string; options: { plan: string; price: string }[] }[];
 }

@@ -69,19 +69,11 @@ export const ProgramDetail: React.FC<ProgramDetailProps> = ({
             </div>
 
             <div className="space-y-1.5">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-[11px] font-mono tracking-wider font-semibold text-cyan-400 bg-cyan-950/15 border border-cyan-500/35 px-2.5 py-0.5 rounded-full uppercase">
-                  {program.subcategory}
-                </span>
-                <span className="text-[11px] font-mono tracking-wider font-semibold text-slate-400 bg-white/5 border border-white/10 px-2.5 py-0.5 rounded-full uppercase">
-                  {program.license}
-                </span>
-              </div>
               <h1 id="detail-program-title" className="text-2xl sm:text-4xl font-sans font-extrabold tracking-tight text-white">
                 {program.name}
               </h1>
               <p className="text-slate-400 text-xs sm:text-sm font-sans max-w-xl">
-                Desarrollado por <span className="text-slate-200 font-semibold">{program.developer}</span> • Actualizado el <span className="text-slate-300">{program.updateDate}</span>
+                Desarrollado por <span className="text-slate-200 font-semibold">{program.developer}</span>
               </p>
             </div>
           </div>
@@ -124,80 +116,14 @@ export const ProgramDetail: React.FC<ProgramDetailProps> = ({
               <ProgramIcon name="Info" className="text-cyan-400" size={18} />
               <span>Acerca de {program.name}</span>
             </h2>
-            <p className="text-slate-300 text-sm leading-relaxed font-sans font-medium">
-              {program.description}
-            </p>
-            <p className="text-slate-400 text-sm leading-relaxed font-sans">
+            {program.description && (!program.detailedDescription || !program.detailedDescription.trim().startsWith(program.description.trim())) && (
+              <p className="text-slate-300 text-sm leading-relaxed font-sans font-medium">
+                {program.description}
+              </p>
+            )}
+            <p className="text-slate-300 text-sm leading-relaxed font-sans">
               {program.detailedDescription}
             </p>
-
-            {/* Verificación de Seguridad collapsible */}
-            <div className="pt-4 border-t border-white/5 space-y-3">
-              <button
-                type="button"
-                onClick={() => setShowSecurityCheck(!showSecurityCheck)}
-                className="flex items-center justify-between w-full text-xs font-semibold text-slate-300 hover:text-cyan-400 transition-colors duration-200 cursor-pointer outline-none"
-              >
-                <span className="flex items-center space-x-2">
-                  <ProgramIcon name="Shield" className="text-cyan-400" size={14} />
-                  <span>Verificación de Seguridad (Checksums)</span>
-                </span>
-                <ProgramIcon name="ChevronDown" className={`transform transition-transform duration-250 ${showSecurityCheck ? 'rotate-180' : ''}`} size={14} />
-              </button>
-
-              <AnimatePresence>
-                {showSecurityCheck && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    className="overflow-hidden"
-                  >
-                    <div className="pt-2 pb-1 space-y-3 text-[11px] font-mono text-slate-400">
-                      <div className="space-y-1 bg-[#050505]/40 border border-white/10 p-3 rounded-xl">
-                        <div className="flex justify-between items-center text-slate-500 mb-1">
-                          <span className="font-mono text-[9px] uppercase tracking-wider">Algoritmo SHA-256</span>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              const hashVal = generateFakeHash(`${program.id}-${selectedVersion.version}`, 'sha256');
-                              navigator.clipboard.writeText(hashVal);
-                            }}
-                            className="text-cyan-400 hover:text-cyan-300 flex items-center space-x-1 text-[10px] cursor-pointer"
-                            title="Copiar hash"
-                          >
-                            <span>Copiar</span>
-                          </button>
-                        </div>
-                        <p className="break-all text-slate-300 select-all font-mono leading-normal bg-white/[0.01] p-2 rounded border border-white/5">
-                          {generateFakeHash(`${program.id}-${selectedVersion.version}`, 'sha256')}
-                        </p>
-                      </div>
-
-                      <div className="space-y-1 bg-[#050505]/40 border border-white/10 p-3 rounded-xl">
-                        <div className="flex justify-between items-center text-slate-500 mb-1">
-                          <span className="font-mono text-[9px] uppercase tracking-wider">Algoritmo MD5</span>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              const hashVal = generateFakeHash(`${program.id}-${selectedVersion.version}`, 'md5');
-                              navigator.clipboard.writeText(hashVal);
-                            }}
-                            className="text-cyan-400 hover:text-cyan-300 flex items-center space-x-1 text-[10px] cursor-pointer"
-                            title="Copiar hash"
-                          >
-                            <span>Copiar</span>
-                          </button>
-                        </div>
-                        <p className="break-all text-slate-300 select-all font-mono leading-normal bg-white/[0.01] p-2 rounded border border-white/5">
-                          {generateFakeHash(`${program.id}-${selectedVersion.version}`, 'md5')}
-                        </p>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
           </section>
 
           {/* Key Features */}
@@ -225,33 +151,47 @@ export const ProgramDetail: React.FC<ProgramDetailProps> = ({
                 <ProgramIcon name="Calendar" className="text-amber-400" size={18} />
                 <span>Novedades en {selectedVersion.version}</span>
               </h2>
-              <span className="text-xs font-mono text-slate-500">
-                Lanzado el {selectedVersion.releaseDate}
-              </span>
             </div>
             <div className="p-4 rounded-xl bg-white/[0.02] border border-white/10 space-y-3">
               <ul className="space-y-2">
-                {(showFullChangelog ? selectedVersion.changelog : selectedVersion.changelog.slice(0, 1)).map((log, idx) => (
+                {selectedVersion.changelog.map((log, idx) => (
                   <li key={idx} className="flex items-start space-x-2 text-xs text-slate-350 leading-relaxed font-sans">
                     <span className="text-cyan-400 font-bold mr-1.5 select-none">•</span>
                     <span>{log}</span>
                   </li>
                 ))}
               </ul>
-              {selectedVersion.changelog.length > 1 && (
-                <div className="pt-2 border-t border-white/5 flex">
-                  <button
-                    type="button"
-                    onClick={() => setShowFullChangelog(!showFullChangelog)}
-                    className="text-xs text-cyan-400 hover:text-cyan-300 font-medium transition-colors inline-flex items-center space-x-1 cursor-pointer outline-none"
-                  >
-                    <span>{showFullChangelog ? "Ver menos novedades" : "Ver registro de cambios completo"}</span>
-                    <ProgramIcon name="ChevronDown" className={`transform transition-transform duration-200 ${showFullChangelog ? 'rotate-180' : ''}`} size={14} />
-                  </button>
-                </div>
-              )}
             </div>
           </section>
+
+          {/* Pricing Planes */}
+          {program.pricing && program.pricing.length > 0 && (
+            <section id="section-pricing" className="space-y-4 p-6 sm:p-7 rounded-2xl glass backdrop-blur-md">
+              <h2 className="text-lg font-sans font-bold text-white flex items-center space-x-2">
+                <ProgramIcon name="Cpu" className="text-cyan-400" size={18} />
+                <span>Planes y Precios</span>
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {program.pricing.map((category, idx) => (
+                  <div key={idx} className="p-4 rounded-xl bg-white/[0.02] border border-white/10 space-y-3 glass">
+                    <h3 className="text-xs font-bold text-slate-350 font-mono uppercase tracking-wider border-b border-white/5 pb-2">
+                      {category.title}
+                    </h3>
+                    <ul className="space-y-2">
+                      {category.options.map((opt, optIdx) => (
+                        <li key={optIdx} className="flex justify-between items-start gap-2 text-xs font-sans">
+                          <span className="text-slate-450 font-medium leading-relaxed">{opt.plan}:</span>
+                          <span className="text-cyan-400 font-bold shrink-0 font-mono bg-cyan-950/20 px-2 py-0.5 rounded border border-cyan-500/20 shadow-[0_0_6px_rgba(6,182,212,0.15)]">
+                            {opt.price}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
 
           {/* Ratings and Reviews list */}
           <section id="section-reviews" className="space-y-6 p-6 sm:p-7 rounded-2xl glass backdrop-blur-md">
@@ -410,7 +350,7 @@ export const ProgramDetail: React.FC<ProgramDetailProps> = ({
                 >
                   {program.versions.map((ver, idx) => (
                     <option key={idx} value={idx}>
-                      {ver.version} {ver.isBeta ? '(Beta)' : '(Estable)'} - {ver.releaseDate}
+                      {ver.version} {ver.isBeta ? '(Beta)' : ''}
                     </option>
                   ))}
                 </select>
@@ -431,6 +371,20 @@ export const ProgramDetail: React.FC<ProgramDetailProps> = ({
                 <ProgramIcon name="Download" size={18} />
                 <span>Descargar {selectedVersion.version} ({selectedVersion.size})</span>
               </button>
+
+              {/* Official Page Button */}
+              {program.officialUrl && (
+                <a
+                  id="official-page-button"
+                  href={program.officialUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-2.5 px-4 rounded-xl bg-white/5 border border-white/10 text-slate-200 hover:text-white hover:bg-white/10 hover:border-cyan-500/30 transition-all flex items-center justify-center space-x-2 cursor-pointer font-sans text-xs font-semibold"
+                >
+                  <ProgramIcon name="Cpu" size={14} className="text-cyan-400" />
+                  <span>Visitar Página Oficial</span>
+                </a>
+              )}
 
               <div className="p-3 rounded-xl bg-emerald-500/5 border border-emerald-500/10 flex items-center space-x-2.5 text-left">
                 <ProgramIcon name="Shield" className="text-emerald-400 shrink-0" size={18} />
@@ -473,23 +427,55 @@ export const ProgramDetail: React.FC<ProgramDetailProps> = ({
               <div className="flex justify-between items-center text-xs font-sans">
                 <span className="text-slate-500 font-medium">Formato:</span>
                 <span className="inline-flex items-center text-[10px] font-mono font-semibold text-cyan-400 bg-cyan-950/20 border border-cyan-500/30 px-2 py-0.5 rounded-full shadow-[0_0_6px_rgba(6,182,212,0.15)] uppercase">
-                  {program.compatibility.includes('Android') ? 'APK' : 'Instalador Nativo / Portable'}
+                  {program.format || 'Instalador Oficial'}
                 </span>
               </div>
               <div className="flex justify-between items-center text-xs font-sans">
                 <span className="text-slate-500 font-medium">Plataformas:</span>
-                <span className="text-slate-350 font-medium flex items-center space-x-1">
-                  {program.compatibility.map((os) => (
-                    <span key={os} title={os} className="inline-flex p-1 rounded-md bg-[#050505] border border-white/10 text-slate-400 shadow-sm">
-                      <ProgramIcon name={os} size={10} />
-                    </span>
-                  ))}
+                <span className="text-slate-350 font-semibold text-[11px]">
+                  {program.compatibility.includes('Android') || program.compatibility.includes('iOS') ? 'Móvil' : 'PC'}
                 </span>
               </div>
               <div className="flex justify-between items-center text-xs font-sans">
                 <span className="text-slate-500 font-medium">Licencia:</span>
-                <span className="inline-flex items-center text-[10px] font-mono font-semibold text-emerald-450 bg-emerald-950/20 border border-emerald-500/30 px-2 py-0.5 rounded-full shadow-[0_0_6px_rgba(16,185,129,0.15)] uppercase">
-                  {program.license}
+                {program.license && (program.license.toLowerCase().includes('gratis') || program.license.toLowerCase().includes('libre')) ? (
+                  <span className="inline-flex items-center text-[10px] font-mono font-semibold text-emerald-400 bg-emerald-950/20 border border-emerald-500/30 px-2.5 py-0.5 rounded-full shadow-[0_0_6px_rgba(16,185,129,0.15)]">
+                    {program.license}
+                  </span>
+                ) : (
+                  <span className="text-slate-350 font-semibold text-[11px]">
+                    {program.license}
+                  </span>
+                )}
+              </div>
+              <div className="flex justify-between items-center text-xs font-sans">
+                <span className="text-slate-500 font-medium">Descarga:</span>
+                {program.downloadType && program.downloadType.toLowerCase().includes('gratis') ? (
+                  <span className="inline-flex items-center text-[10px] font-mono font-semibold text-emerald-400 bg-emerald-950/20 border border-emerald-500/30 px-2.5 py-0.5 rounded-full shadow-[0_0_6px_rgba(16,185,129,0.15)]">
+                    {program.downloadType}
+                  </span>
+                ) : (
+                  <span className="text-slate-350 font-semibold text-[11px]">
+                    {program.downloadType || 'Gratis'}
+                  </span>
+                )}
+              </div>
+              <div className="flex justify-between items-center text-xs font-sans">
+                <span className="text-slate-500 font-medium">Tipo de Archivo:</span>
+                <span className="text-slate-350 font-semibold text-[11px] uppercase">
+                  {program.fileType || 'RAR'}
+                </span>
+              </div>
+              <div className="flex justify-between items-center text-xs font-sans">
+                <span className="text-slate-500 font-medium">Idioma:</span>
+                <span className="text-slate-350 font-medium text-[11px]">
+                  {program.language || 'Español'}
+                </span>
+              </div>
+              <div className="flex justify-between items-center text-xs font-sans">
+                <span className="text-slate-500 font-medium">Peso:</span>
+                <span className="text-slate-350 font-mono font-semibold text-[11px]">
+                  {program.size}
                 </span>
               </div>
             </div>
