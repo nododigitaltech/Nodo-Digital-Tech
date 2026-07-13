@@ -59,4 +59,6 @@ export interface Program {
   megaUrl?: string;
   driveUrl?: string;
   mediafireUrl?: string;
+  screenshots?: string[];
+  videoUrl?: string;
 }

@@ -3,6 +3,7 @@ import { Program } from '../types';
 import { ProgramIcon } from './ProgramIcon';
 import { motion } from 'motion/react';
 import { slugify } from '../utils/slugify';
+import { formatSpanishDate } from '../utils/date';
 
 interface ProgramCardProps {
   program: Program;
@@ -60,7 +61,7 @@ export const ProgramCard: React.FC<ProgramCardProps> = ({ program, onSelect }) =
         </div>
         <div className="text-[10px] text-slate-500 font-sans flex items-center space-x-1">
           <span>Lanzamiento:</span>
-          <span className="text-slate-400 font-medium font-mono text-[9px]">{program.updateDate}</span>
+          <span className="text-slate-400 font-medium font-mono text-[9px]">{formatSpanishDate(program.updateDate)}</span>
         </div>
       </div>
 

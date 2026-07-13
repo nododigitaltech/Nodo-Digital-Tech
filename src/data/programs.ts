@@ -9,23 +9,52 @@ const rawPrograms: Program[] = [
   ...programsPart3
 ];
 
+function getProgramNameWithVersion(name: string, latestVersion: string): string {
+  const nameLower = name.toLowerCase();
+  const verLower = latestVersion.toLowerCase();
+  
+  if (nameLower.includes(verLower)) {
+    return name;
+  }
+  
+  const verWithoutV = latestVersion.startsWith('v') ? latestVersion.substring(1) : latestVersion;
+  if (nameLower.includes(verWithoutV.toLowerCase())) {
+    return name;
+  }
+  
+  const yearMatch = name.match(/\b(202\d)\b/);
+  if (yearMatch) {
+    const year = yearMatch[1];
+    if (latestVersion.startsWith(year)) {
+      const subVer = latestVersion.substring(year.length).trim();
+      if (subVer && !nameLower.includes(subVer.toLowerCase())) {
+        return `${name} ${subVer}`;
+      }
+      return name;
+    }
+  }
+  
+  return `${name} ${latestVersion}`;
+}
+
 export const mockPrograms: Program[] = rawPrograms.map((p) => {
+  // Clean version strings by removing leading 'v' or 'V'
+  let latestVersion = p.latestVersion;
+  if (latestVersion && (latestVersion.startsWith('v') || latestVersion.startsWith('V')) && latestVersion.length > 1) {
+    latestVersion = latestVersion.substring(1);
+  }
+
+  // Determine name with version
+  const name = getProgramNameWithVersion(p.name, latestVersion);
+
   // Determine format
-  const format = p.format || (
-    p.category === 'Apps Móviles' ? 'Instalador APK' :
-    p.category === 'Juegos' ? 'Instalador Digital (ISO)' : 'Instalador Oficial'
-  );
+  const format = 'Instalador Oficial';
 
   // Determine fileType
-  const fileType = p.fileType || (
-    p.category === 'Apps Móviles' ? 'APK' :
-    p.id.charCodeAt(0) % 2 === 0 ? 'RAR' : 'ZIP'
-  );
+  const fileType = 'RAR';
 
   // Determine language
-  const language = p.language || (
-    p.id.charCodeAt(1) % 2 === 0 ? 'Español' : 'Multilenguaje (Español incluido)'
-  );
+  const language = 'Español';
 
   // Determine downloadType
   const downloadType = p.downloadType || 'Gratis';
@@ -120,13 +149,22 @@ export const mockPrograms: Program[] = rawPrograms.map((p) => {
   const description = cleanText(p.description);
   const detailedDescription = cleanText(p.detailedDescription);
 
-  const versions = p.versions ? p.versions.map((v) => ({
-    ...v,
-    changelog: v.changelog ? v.changelog.map(cleanText).filter(Boolean) : []
-  })) : p.versions;
+  const versions = p.versions ? p.versions.map((v) => {
+    let cleanVer = v.version;
+    if (cleanVer && (cleanVer.startsWith('v') || cleanVer.startsWith('V')) && cleanVer.length > 1) {
+      cleanVer = cleanVer.substring(1);
+    }
+    return {
+      ...v,
+      version: cleanVer,
+      changelog: v.changelog ? v.changelog.map(cleanText).filter(Boolean) : []
+    };
+  }) : p.versions;
 
   return {
     ...p,
+    name,
+    latestVersion,
     compatibility,
     requirements,
     subtitle,

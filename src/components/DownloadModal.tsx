@@ -82,15 +82,15 @@ export const DownloadModal: React.FC<DownloadModalProps> = ({
   const defaultFallbackUrl = "https://www.youtube.com/@NodoDigitalTech";
 
   const megaUrl = isIdm
-    ? "https://mega.nz/file/r4ABADKA#UVPPUuuWqFJWQcdp1Aak3KATj7DH0-T2ADIQDMD8Axw"
+    ? "https://mega.nz/file/DpBXxSSI#EXlIQD42uwYNoGxuWVMfsgBD1BwkGEi81PyoYagz2QM"
     : (currentVersionObj?.megaUrl || program.megaUrl || defaultFallbackUrl);
 
   const driveUrl = isIdm
-    ? "https://drive.google.com/file/d/1_wAW6zRSnUHcxGwt-CA47cJPoym-62v3/view"
+    ? "https://drive.google.com/file/d/1mV7NfFbeDwxf-dbGCIjeM9FmE_X2dCHB/view?usp=drive_link"
     : (currentVersionObj?.driveUrl || program.driveUrl || defaultFallbackUrl);
 
   const mediafireUrl = isIdm
-    ? "https://www.mediafire.com/file/yjoydzchpbp1bj1/Internet_Download_Manager_6.43_Build_3.rar/file"
+    ? "https://www.mediafire.com/file/q5gcdpj2v86mz4n/Internet_Download_Manager_6.43_Build_5.rar/file"
     : (currentVersionObj?.mediafireUrl || program.mediafireUrl || defaultFallbackUrl);
 
   const handleMegaClick = (e: React.MouseEvent) => {

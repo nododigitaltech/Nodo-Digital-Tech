@@ -3,6 +3,32 @@ import { Program, ProgramVersion } from '../types';
 import { ProgramIcon } from './ProgramIcon';
 import { motion, AnimatePresence } from 'motion/react';
 import { slugify } from '../utils/slugify';
+import { formatSpanishDate } from '../utils/date';
+import { ZoomIn, X, Youtube } from 'lucide-react';
+
+const getYouTubeEmbedUrl = (url: string): string => {
+  if (!url) return '';
+  try {
+    if (url.includes('youtube.com/watch')) {
+      const urlObj = new URL(url);
+      const v = urlObj.searchParams.get('v');
+      if (v) return `https://www.youtube.com/embed/${v}`;
+    }
+    if (url.includes('youtu.be/')) {
+      const parts = url.split('youtu.be/');
+      if (parts[1]) {
+        const id = parts[1].split('?')[0].split('&')[0];
+        return `https://www.youtube.com/embed/${id}`;
+      }
+    }
+    if (url.includes('youtube.com/embed/')) {
+      return url;
+    }
+  } catch (e) {
+    // ignore
+  }
+  return url;
+};
 
 interface ProgramDetailProps {
   program: Program;
@@ -26,6 +52,7 @@ export const ProgramDetail: React.FC<ProgramDetailProps> = ({
   const [showSecurityCheck, setShowSecurityCheck] = useState(false);
   const [showFullChangelog, setShowFullChangelog] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [activeScreenshot, setActiveScreenshot] = useState<string | null>(null);
 
   const handleShare = () => {
     const programSlug = slugify(program.name);
@@ -126,7 +153,7 @@ export const ProgramDetail: React.FC<ProgramDetailProps> = ({
                 <span className="text-slate-600 select-none">•</span>
                 <span className="flex items-center space-x-1">
                   <span>Lanzamiento:</span>
-                  <span className="text-cyan-400 font-semibold font-mono">{program.updateDate}</span>
+                  <span className="text-slate-300 font-medium">{formatSpanishDate(program.updateDate)}</span>
                 </span>
               </div>
             </div>
@@ -141,12 +168,6 @@ export const ProgramDetail: React.FC<ProgramDetailProps> = ({
                 <span className="font-bold text-sm text-slate-100">{program.rating.toFixed(1)}</span>
               </div>
               <p className="text-[9px] text-slate-500 font-mono mt-0.5 uppercase">Valoración</p>
-            </div>
-
-            {/* Size card */}
-            <div className="px-4 py-2.5 rounded-2xl bg-[#050505]/50 border border-white/10 text-center min-w-18 glass">
-              <span className="font-bold text-sm text-slate-100">{selectedVersion.size}</span>
-              <p className="text-[9px] text-slate-500 font-mono mt-0.5 uppercase">Tamaño</p>
             </div>
 
             {/* Downloads card */}
@@ -221,21 +242,56 @@ export const ProgramDetail: React.FC<ProgramDetailProps> = ({
           {/* Pricing Planes */}
           {program.pricing && program.pricing.length > 0 && (
             <section id="section-pricing" className="space-y-4 p-6 sm:p-7 rounded-2xl glass backdrop-blur-md">
-              <h2 className="text-lg font-sans font-bold text-white flex items-center space-x-2">
-                <ProgramIcon name="Cpu" className="text-cyan-400" size={18} />
-                <span>Planes y Precios</span>
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <h2 className="text-lg font-sans font-bold text-white flex items-center space-x-2">
+                  <ProgramIcon name="Cpu" className="text-cyan-400" size={18} />
+                  <span>Planes y Precios</span>
+                </h2>
+                {program.officialUrl ? (
+                  <a
+                    id="official-page-anchor"
+                    href={program.officialUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center space-x-2 py-1.5 px-3.5 rounded-xl bg-white/5 border border-white/10 text-slate-200 hover:text-white hover:bg-white/10 hover:border-cyan-500/30 transition-all cursor-pointer font-sans text-xs font-semibold shrink-0 w-fit"
+                  >
+                    <ProgramIcon name="Globe" size={13} className="text-cyan-400 shrink-0" />
+                    <span>Visitar Página Oficial</span>
+                  </a>
+                ) : null}
+              </div>
+
+              {/* Community Notice */}
+              <div className="p-3.5 rounded-xl bg-cyan-950/20 border border-cyan-500/10 text-slate-300 text-xs leading-relaxed font-sans flex items-start space-x-2.5">
+                <ProgramIcon name="AlertCircle" className="text-cyan-400 shrink-0 mt-0.5" size={16} />
+                <p>
+                  <span className="font-bold text-cyan-300">Aviso:</span> Los precios de abajo son de referencia oficial. En <span className="font-bold text-white">Nodo Digital Tech</span> descargas la versión completa de forma totalmente gratuita y sin costo para nuestra comunidad. Si prefieres apoyar al creador con una licencia de paga, visita su sitio oficial.
+                </p>
+              </div>
+
+              <div className={`grid gap-4 ${program.pricing.length === 1 ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-2'}`}>
                 {program.pricing.map((category, idx) => (
-                  <div key={idx} className="p-4 rounded-xl bg-white/[0.02] border border-white/10 space-y-3 glass">
-                    <h3 className="text-xs font-bold text-slate-350 font-mono uppercase tracking-wider border-b border-white/5 pb-2">
+                  <div 
+                    key={idx} 
+                    className={`p-5 rounded-2xl bg-white/[0.01] border border-white/10 space-y-4 glass backdrop-blur-sm ${
+                      program.pricing.length === 1 ? 'col-span-full' : ''
+                    }`}
+                  >
+                    <h3 className="text-xs font-bold text-cyan-400/90 font-mono uppercase tracking-wider border-b border-white/5 pb-2.5">
                       {category.title}
                     </h3>
-                    <ul className="space-y-2">
+                    <ul className={`grid gap-3 ${
+                      program.pricing.length === 1 
+                        ? 'grid-cols-1 sm:grid-cols-2' 
+                        : 'grid-cols-1'
+                    }`}>
                       {category.options.map((opt, optIdx) => (
-                        <li key={optIdx} className="flex justify-between items-start gap-2 text-xs font-sans">
-                          <span className="text-slate-450 font-medium leading-relaxed">{opt.plan}:</span>
-                          <span className="text-cyan-400 font-bold shrink-0 font-mono bg-cyan-950/20 px-2 py-0.5 rounded border border-cyan-500/20 shadow-[0_0_6px_rgba(6,182,212,0.15)]">
+                        <li 
+                          key={optIdx} 
+                          className="flex justify-between items-center gap-4 text-xs font-sans bg-white/[0.02] border border-white/5 hover:border-cyan-500/20 hover:bg-white/[0.04] transition-all duration-200 rounded-xl p-3.5"
+                        >
+                          <span className="text-slate-300 font-medium leading-relaxed">{opt.plan}</span>
+                          <span className="text-cyan-400 font-bold shrink-0 font-mono bg-cyan-950/40 px-2.5 py-1 rounded border border-cyan-500/20 shadow-[0_0_8px_rgba(6,182,212,0.12)]">
                             {opt.price}
                           </span>
                         </li>
@@ -243,6 +299,93 @@ export const ProgramDetail: React.FC<ProgramDetailProps> = ({
                     </ul>
                   </div>
                 ))}
+              </div>
+            </section>
+          )}
+
+          {/* Section: Screenshots / Program Interface */}
+          {program.screenshots && program.screenshots.length > 0 && (
+            <section id="section-screenshots" className="space-y-4 p-6 sm:p-7 rounded-2xl glass backdrop-blur-md">
+              <h2 className="text-lg font-sans font-bold text-white flex items-center space-x-2">
+                <ProgramIcon name="Layout" className="text-cyan-400" size={18} />
+                <span>Capturas de Pantalla</span>
+              </h2>
+              <p className="text-slate-300 text-sm leading-relaxed font-sans">
+                Echa un vistazo a la interfaz real de la aplicación para conocer su diseño y distribución antes de instalarla.
+              </p>
+              <div className={
+                program.screenshots.length === 1
+                  ? "flex justify-center pt-2"
+                  : "grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2"
+              }>
+                {program.screenshots.map((src, index) => (
+                  <div
+                    key={index}
+                    onClick={() => setActiveScreenshot(src)}
+                    className={`group relative overflow-hidden rounded-xl border border-white/10 bg-[#050505]/40 aspect-[16/9] transition-all hover:border-cyan-500/50 hover:shadow-cyan-950/20 shadow-lg cursor-pointer ${
+                      program.screenshots.length === 1 ? 'w-full max-w-2xl' : ''
+                    }`}
+                  >
+                    <img
+                      src={src}
+                      alt={`Screenshot ${index + 1} of ${program.name}`}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                      referrerPolicy="no-referrer"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-between p-4">
+                      <div className="self-end p-1.5 rounded-lg bg-black/60 border border-white/15 backdrop-blur-sm transform -translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                        <ZoomIn size={15} className="text-cyan-400" />
+                      </div>
+                      <span className="text-[10px] text-slate-300 font-sans font-medium tracking-wide">
+                        Click para ampliar • Captura {index + 1}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Section: Installation Video Tutorial */}
+          {program.videoUrl && (
+            <section id="section-video" className="space-y-4 p-6 sm:p-7 rounded-2xl glass backdrop-blur-md">
+              <h2 className="text-lg font-sans font-bold text-white flex items-center space-x-2">
+                <ProgramIcon name="Video" className="text-cyan-400" size={18} />
+                <span>Video de Instalación</span>
+              </h2>
+              <p className="text-slate-300 text-sm leading-relaxed font-sans">
+                Sigue nuestro video tutorial paso a paso para realizar una instalación limpia, rápida y sin complicaciones de esta versión.
+              </p>
+              <div className="pt-2">
+                <div className="w-full aspect-video rounded-xl overflow-hidden border border-white/10 shadow-lg bg-[#050505]/40">
+                  <iframe
+                    src={getYouTubeEmbedUrl(program.videoUrl)}
+                    title={`Video tutorial de instalación de ${program.name}`}
+                    className="w-full h-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                  />
+                </div>
+              </div>
+
+              {/* YouTube Channel CTA */}
+              <div className="mt-5 p-4 rounded-xl border border-white/10 bg-[#050505]/40 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="flex items-center space-x-3 text-left">
+                  <div className="p-2 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 flex-shrink-0">
+                    <Youtube size={18} />
+                  </div>
+                  <p className="text-sm font-medium text-slate-200">
+                    ¿Quieres ver más tutoriales y guías paso a paso?
+                  </p>
+                </div>
+                <a
+                  href="https://www.youtube.com/@NodoDigitalTech"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-4 py-2.5 rounded-lg text-xs font-semibold text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all active:scale-[0.98] shadow-md cursor-pointer whitespace-nowrap"
+                >
+                  <span>Visitar canal de YouTube de Nodo Digital Tech</span>
+                </a>
               </div>
             </section>
           )}
@@ -426,20 +569,6 @@ export const ProgramDetail: React.FC<ProgramDetailProps> = ({
                 <span>Descargar {selectedVersion.version} ({selectedVersion.size})</span>
               </button>
 
-              {/* Official Page Button */}
-              {program.officialUrl ? (
-                <a
-                  id="official-page-button"
-                  href={program.officialUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full py-2.5 px-4 rounded-xl bg-white/5 border border-white/10 text-slate-200 hover:text-white hover:bg-white/10 hover:border-cyan-500/30 transition-all flex items-center justify-center space-x-2 cursor-pointer font-sans text-xs font-semibold text-center"
-                >
-                  <ProgramIcon name="Cpu" size={14} className="text-cyan-400 shrink-0" />
-                  <span>Visitar Página Oficial</span>
-                </a>
-              ) : null}
-
               {/* Share Button */}
               <button
                 id="share-program-button"
@@ -499,15 +628,21 @@ export const ProgramDetail: React.FC<ProgramDetailProps> = ({
                 </span>
               </div>
               <div className="flex justify-between items-center text-xs font-sans">
+                <span className="text-slate-500 font-medium">Activación:</span>
+                <span className="text-slate-350 font-semibold text-[11px]">
+                  Con aplicación
+                </span>
+              </div>
+              <div className="flex justify-between items-center text-xs font-sans">
                 <span className="text-slate-500 font-medium">Plataformas:</span>
                 <span className="text-slate-350 font-semibold text-[11px]">
-                  {program.compatibility.includes('Android') || program.compatibility.includes('iOS') ? 'Móvil' : 'PC'}
+                  PC
                 </span>
               </div>
               <div className="flex justify-between items-center text-xs font-sans">
                 <span className="text-slate-500 font-medium">Licencia:</span>
                 {program.license && (program.license.toLowerCase().includes('gratis') || program.license.toLowerCase().includes('libre')) ? (
-                  <span className="inline-flex items-center text-[10px] font-mono font-semibold text-emerald-400 bg-emerald-950/20 border border-emerald-500/30 px-2.5 py-0.5 rounded-full shadow-[0_0_6px_rgba(16,185,129,0.15)]">
+                  <span className="text-emerald-400 font-bold text-[11.5px] uppercase drop-shadow-[0_0_4.5px_rgba(52,211,153,0.4)]">
                     {program.license}
                   </span>
                 ) : (
@@ -519,7 +654,7 @@ export const ProgramDetail: React.FC<ProgramDetailProps> = ({
               <div className="flex justify-between items-center text-xs font-sans">
                 <span className="text-slate-500 font-medium">Descarga:</span>
                 {program.downloadType && program.downloadType.toLowerCase().includes('gratis') ? (
-                  <span className="inline-flex items-center text-[10px] font-mono font-semibold text-emerald-400 bg-emerald-950/20 border border-emerald-500/30 px-2.5 py-0.5 rounded-full shadow-[0_0_6px_rgba(16,185,129,0.15)]">
+                  <span className="text-emerald-400 font-bold text-[11.5px] uppercase drop-shadow-[0_0_4.5px_rgba(52,211,153,0.4)]">
                     {program.downloadType}
                   </span>
                 ) : (
@@ -548,8 +683,8 @@ export const ProgramDetail: React.FC<ProgramDetailProps> = ({
               </div>
               <div className="flex justify-between items-center text-xs font-sans">
                 <span className="text-slate-500 font-medium">Lanzamiento:</span>
-                <span className="text-slate-350 font-mono font-semibold text-[11px]">
-                  {program.updateDate}
+                <span className="text-slate-350 font-medium text-[11px]">
+                  {formatSpanishDate(program.updateDate)}
                 </span>
               </div>
             </div>
@@ -606,6 +741,54 @@ export const ProgramDetail: React.FC<ProgramDetailProps> = ({
 
         </div>
       </div>
+
+      {/* Screenshot Lightbox Modal */}
+      <AnimatePresence>
+        {activeScreenshot && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md cursor-zoom-out"
+            onClick={() => setActiveScreenshot(null)}
+          >
+            {/* Close Button */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setActiveScreenshot(null);
+              }}
+              className="absolute top-4 right-4 p-2.5 rounded-full bg-white/5 border border-white/10 text-slate-300 hover:text-white hover:bg-white/10 transition-colors z-50 cursor-pointer"
+              title="Cerrar vista"
+            >
+              <X size={20} />
+            </button>
+
+            {/* Animated Image Container */}
+            <motion.div
+              initial={{ scale: 0.95, y: 15 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 15 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 250 }}
+              className="relative max-w-5xl w-full max-h-[85vh] rounded-2xl overflow-hidden border border-white/15 shadow-[0_0_50px_rgba(6,182,212,0.15)] bg-slate-950/80"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <img
+                src={activeScreenshot}
+                alt="Vista ampliada de captura de pantalla"
+                className="w-full h-auto max-h-[85vh] object-contain mx-auto"
+                referrerPolicy="no-referrer"
+              />
+              
+              {/* Subtle info label on lightbox bottom */}
+              <div className="absolute bottom-0 inset-x-0 p-4 bg-gradient-to-t from-black/80 to-transparent flex justify-between items-center text-xs text-slate-300 font-sans pointer-events-none">
+                <span>{program.name}</span>
+                <span className="text-[10px] text-slate-400">Captura de pantalla oficial</span>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
