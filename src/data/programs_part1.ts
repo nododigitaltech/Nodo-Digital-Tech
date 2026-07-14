@@ -317,7 +317,7 @@ export const programsPart1: Program[] = [
       '/images/IDM 6.43 Build 5 Registrado.jpg',
       '/images/IDM 6.43 Build 5 Versión.jpg'
     ],
-    videoUrl: 'https://www.youtube.com/watch?v=oVNT55d8LpI&t=3s'
+    videoUrl: 'https://youtu.be/Q4DuWFD_YIw'
   },
   {
     id: 'office-2024-ltsc',
