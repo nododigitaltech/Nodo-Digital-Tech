@@ -82,6 +82,7 @@ export const programsPart1: Program[] = [
     screenshots: [
       '/images/capturas/Winrar 7.23.png'
     ],
+    videoUrl: 'https://youtu.be/fyAjLIa86rE',
     officialUrl: 'https://winrar.es/'
   },
   {
