@@ -543,10 +543,10 @@ export const programsPart1: Program[] = [
     icon: '/images/logos/Filmora Logo.png',
     rating: 4.8,
     downloads: 215000,
-    size: '752 MB',
-    latestVersion: '15.3.3',
+    size: '4.07 MB',
+    latestVersion: '15.6.4',
     compatibility: ['Windows', 'macOS'],
-    updateDate: '2026-03-10',
+    updateDate: '2026-06-11',
     developer: 'Wondershare Technology',
     license: 'Versión Completa',
     description: 'Wondershare Filmora es un software de edición de video multiplataforma y multifuncional diseñado tanto para creadores principiantes como avanzados, destacando por integrar de forma fluida herramientas impulsadas por inteligencia artificial (IA) que reducen el esfuerzo en tareas técnicas complejas.',
@@ -576,9 +576,9 @@ export const programsPart1: Program[] = [
     },
     versions: [
       {
-        version: '15.3.3',
-        releaseDate: '2026-03-10',
-        size: '752 MB',
+        version: '15.6.4',
+        releaseDate: '2026-06-11',
+        size: '4.07 MB',
         changelog: [
           'Herramienta Cuentagotas HSL (Pipette HSL): Permite hacer clic con una pipeta sobre cualquier color específico dentro del video para aislarlo, modificando su tono, saturación y luminancia sin alterar el resto de los colores.',
           'Nuevas Ruedas Cromáticas HDR: Se ampliaron las opciones de gradación de color añadiendo 6 ruedas cromáticas para control milimétrico sobre luces, sombras y tonos medios en clips de alto rango dinámico.',
@@ -588,7 +588,10 @@ export const programsPart1: Program[] = [
           'Gestión de Proyectos Optimizada: Permite renombrar archivos y modificar las rutas de guardado directamente desde la interfaz activa.',
           'Gráficos Animados Mejorados: Soporte para mostrar datos en porcentajes, control sobre longitud de ejes y mayor resolución al exportar tablas o estadísticas.'
         ],
-        downloadUrl: 'https://filmora.wondershare.es/'
+        downloadUrl: 'https://mega.nz/file/zoYHXYwa#IQ-CmVNFYaPtgnI89E-TRF6buUSRLXLsLbXezGWl_Ow',
+        megaUrl: 'https://mega.nz/file/zoYHXYwa#IQ-CmVNFYaPtgnI89E-TRF6buUSRLXLsLbXezGWl_Ow',
+        driveUrl: 'https://drive.google.com/file/d/1nf3P3-84Ug2JBTHSvw9ttWL00HhwzU3H/view?usp=drive_link',
+        mediafireUrl: 'https://www.mediafire.com/file/n3l1fvlw7mo591s/Filmora_15.6.4.rar/file'
       }
     ],
     pricing: [
@@ -610,7 +613,12 @@ export const programsPart1: Program[] = [
         date: '2026-06-24',
         comment: 'Muy fácil de usar. Mi canal de YouTube ha crecido un montón usando las plantillas de Filmora.'
       }
-    ]
+    ],
+    screenshots: [
+      '/images/capturas/Filmora 1.png',
+      '/images/capturas/Filmora 2.png'
+    ],
+    officialUrl: 'https://filmora.wondershare.es/'
   },
   {
     id: 'lightroom-classic',
