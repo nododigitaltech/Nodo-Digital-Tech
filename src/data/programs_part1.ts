@@ -80,7 +80,7 @@ export const programsPart1: Program[] = [
       }
     ],
     screenshots: [
-      '/images/Winrar 7.23.png'
+      '/images/capturas/Winrar 7.23.png'
     ],
     officialUrl: 'https://winrar.es/'
   },
@@ -618,7 +618,7 @@ export const programsPart1: Program[] = [
       '/images/capturas/Filmora 1.png',
       '/images/capturas/Filmora 2.png'
     ],
-    videoUrl: 'https://youtu.be/_dv_7fwC2xY',
+    videoUrl: 'https://youtu.be/m-7lUJagPJU',
     officialUrl: 'https://filmora.wondershare.es/'
   },
   {
