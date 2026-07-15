@@ -618,7 +618,7 @@ export const programsPart1: Program[] = [
       '/images/capturas/Filmora 1.png',
       '/images/capturas/Filmora 2.png'
     ],
-    videoUrl: 'https://youtu.be/14YaU7ZiTME',
+    videoUrl: 'https://youtu.be/_dv_7fwC2xY',
     officialUrl: 'https://filmora.wondershare.es/'
   },
   {
