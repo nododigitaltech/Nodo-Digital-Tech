@@ -314,8 +314,8 @@ export const programsPart1: Program[] = [
       }
     ],
     screenshots: [
-      '/images/IDM 6.43 Build 5 Registrado.jpg',
-      '/images/IDM 6.43 Build 5 Versión.jpg'
+      '/images/capturas/IDM 6.43 Build 5 Registrado.jpg',
+      '/images/capturas/IDM 6.43 Build 5 Versión.jpg'
     ],
     videoUrl: 'https://youtu.be/Q4DuWFD_YIw'
   },
@@ -618,6 +618,7 @@ export const programsPart1: Program[] = [
       '/images/capturas/Filmora 1.png',
       '/images/capturas/Filmora 2.png'
     ],
+    videoUrl: 'https://youtu.be/14YaU7ZiTME',
     officialUrl: 'https://filmora.wondershare.es/'
   },
   {
