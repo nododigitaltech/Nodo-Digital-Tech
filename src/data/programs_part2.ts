@@ -298,7 +298,7 @@ export const programsPart2: Program[] = [
     rating: 4.9,
     downloads: 245000,
     size: '2.4 GB',
-    latestVersion: '26.3.0.93',
+    latestVersion: '26.3.0',
     compatibility: ['Windows', 'macOS'],
     updateDate: '2026-07-09',
     developer: 'Adobe Inc.',
@@ -330,7 +330,7 @@ export const programsPart2: Program[] = [
     },
     versions: [
       {
-        version: '26.3.0.93',
+        version: '26.3.0',
         releaseDate: '2026-07-09',
         size: '2.4 GB',
         changelog: [
@@ -375,7 +375,7 @@ export const programsPart2: Program[] = [
     rating: 4.9,
     downloads: 195000,
     size: '1.9 GB',
-    latestVersion: '30.6.0.109',
+    latestVersion: '30.6',
     compatibility: ['Windows', 'macOS'],
     updateDate: '2026-07-07',
     developer: 'Adobe Inc.',
@@ -407,7 +407,7 @@ export const programsPart2: Program[] = [
     },
     versions: [
       {
-        version: '30.6.0.109',
+        version: '30.6',
         releaseDate: '2026-07-07',
         size: '1.9 GB',
         changelog: [
@@ -522,7 +522,7 @@ export const programsPart2: Program[] = [
     rating: 4.9,
     downloads: 385000,
     size: '4.2 GB',
-    latestVersion: '27.8.0.13',
+    latestVersion: '27.8.0',
     compatibility: ['Windows', 'macOS'],
     updateDate: '2026-07-13',
     developer: 'Adobe Inc.',
@@ -554,7 +554,7 @@ export const programsPart2: Program[] = [
     },
     versions: [
       {
-        version: '27.8.0.13',
+        version: '27.8.0',
         releaseDate: '2026-07-13',
         size: '4.2 GB',
         changelog: [
@@ -668,13 +668,13 @@ export const programsPart2: Program[] = [
     rating: 4.8,
     downloads: 165000,
     size: '1.1 GB',
-    latestVersion: '26.1.21691',
+    latestVersion: '26.1.21745',
     compatibility: ['Windows', 'macOS'],
     updateDate: '2026-05-12',
     developer: 'Adobe Inc.',
     license: 'Pre-Activado / Completo',
-    description: 'Adobe Acrobat Pro es la solución integral y avanzada de la familia Adobe para la gestión, creación, edición, conversión, firma y protección de documentos PDF de nivel profesional, cuyas características principales abarcan la edición directa de textos e imágenes dentro de los propios archivos PDF, la conversión bidimensional de documentos hacia y desde formatos de Microsoft Office (como Word, Excel o PowerPoint), la combinación de múltiples archivos en un único paquete organizado, la inserción de campos rellenables y firmas electrónicas avanzadas, la aplicación de contraseñas y restricciones de seguridad estrictas, y la colaboración en tiempo real con herramientas de seguimiento y revisión en la nube para flujos de trabajo empresariales y de oficina sin fricciones.',
-    detailedDescription: 'Adobe Acrobat Pro es la solución integral y avanzada de la familia Adobe para la gestión, creación, edición, conversión, firma y protección de documentos PDF de nivel profesional, cuyas características principales abarcan la edición directa de textos e imágenes dentro de los propios archivos PDF, la conversión bidimensional de documentos hacia y desde formatos de Microsoft Office (como Word, Excel o PowerPoint), la combinación de múltiples archivos en un único paquete organizado, la inserción de campos rellenables y firmas electrónicas avanzadas, la aplicación de contraseñas y restricciones de seguridad estrictas, y la colaboración en tiempo real con herramientas de seguimiento y revisión en la nube para flujos de trabajo empresariales y de oficina sin fricciones.',
+    description: 'Adobe Acrobat Pro es la solución integral y avanzada de la familia Adobe para la gestión, creación, edición, conversión, firma y protección de documentos PDF de nivel profesional, cuyas características principales abarcan la edición directa de textos e imágenes dentro de los propios archivos PDF, la conversión bidimensional de documentos hacia y desde formatos de Microsoft Office (como Word, Excel o PowerPoint), la combinación de múltiples archivos en un único paquete organized, la inserción de campos rellenables y firmas electrónicas avanzadas, la aplicación de contraseñas y restricciones de seguridad estrictas, y la colaboración en tiempo real con herramientas de seguimiento y revisión en la nube para flujos de trabajo empresariales y de oficina sin fricciones.',
+    detailedDescription: 'Adobe Acrobat Pro es la solución integral y avanzada de la familia Adobe para la gestión, creación, edición, conversión, firma y protección de documentos PDF de nivel profesional, cuyas características principales abarcan la edición directa de textos e imágenes dentro de los propios archivos PDF, la conversión bidimensional de documentos hacia y desde formatos de Microsoft Office (como Word, Excel o PowerPoint), la combinación de múltiples archivos en un único paquete organizado, la inserción de campos rellenables y firmas electrónicas avanzadas, la aplicación de contraseñas y restricciones de seguridad strictly, y la colaboración en tiempo real con herramientas de seguimiento y revisión en la nube para flujos de trabajo empresariales y de oficina sin fricciones.',
     features: [
       'Permite la edición directa de textos e imágenes dentro de los propios archivos PDF.',
       'Ofrece la conversión bidimensional de documentos hacia y desde formatos de Microsoft Office como Word, Excel o PowerPoint.',
@@ -701,7 +701,7 @@ export const programsPart2: Program[] = [
     },
     versions: [
       {
-        version: '26.1.21691',
+        version: '26.1.21745',
         releaseDate: '2026-05-12',
         size: '1.1 GB',
         changelog: [

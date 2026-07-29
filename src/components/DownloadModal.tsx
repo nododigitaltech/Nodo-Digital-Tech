@@ -77,21 +77,31 @@ export const DownloadModal: React.FC<DownloadModalProps> = ({
   const cleanName = program.name.replace(new RegExp(`\\s*${escapedVersion}\\s*`, 'i'), '').trim();
 
   // Enlaces de descarga
-  const isIdm = program.id === 'idm';
+  const isIdmOrFilmora = program.id === 'idm' || program.id === 'filmora';
+  const isAdobe = Boolean(
+    program.developer?.toLowerCase().includes('adobe') ||
+    program.name?.toLowerCase().includes('adobe') ||
+    program.id?.includes('adobe') ||
+    ['acrobat-pro', 'acrobat-reader', 'photoshop-2026', 'premiere-pro', 'after-effects', 'lightroom-classic', 'photoshop-elements', 'media-encoder', 'creative-cloud-collection'].includes(program.id)
+  );
+
   const currentVersionObj = program.versions.find(v => v.version === version);
   const defaultFallbackUrl = "https://www.youtube.com/@NodoDigitalTech";
 
-  const megaUrl = isIdm
+  const megaUrl = (program.id === 'idm')
     ? "https://mega.nz/file/WowiDZCA#FxjhuDrZ61U4zUJOFcgVpJ1FMDWN7XQiLk61qcj7dyo"
     : (currentVersionObj?.megaUrl || program.megaUrl || defaultFallbackUrl);
 
-  const driveUrl = isIdm
+  const driveUrl = (program.id === 'idm')
     ? "https://drive.google.com/file/d/1mV7NfFbeDwxf-dbGCIjeM9FmE_X2dCHB/view?usp=drive_link"
     : (currentVersionObj?.driveUrl || program.driveUrl || defaultFallbackUrl);
 
-  const mediafireUrl = isIdm
+  const mediafireUrl = (program.id === 'idm')
     ? "https://www.mediafire.com/file/u6et89kfbipru2g/Internet_Download_Manager_6.43_Build_5.rar/file"
-    : (currentVersionObj?.mediafireUrl || program.mediafireUrl || defaultFallbackUrl);
+    : (currentVersionObj?.mediafireUrl || program.mediafireUrl || currentVersionObj?.downloadUrl || defaultFallbackUrl);
+
+  const creativeCloudUrl = "https://www.adobe.com/download/creative-cloud";
+  const genpUrl = "http://140.238.101.171:8080/ipfs/Qme7rKVsBGEP1Dgzhpy8bmyE5E8zUZzzzDNgjLnRED7sJL?filename=GenP.v4.2.1.zip&download=true";
 
   const handleMegaClick = (e: React.MouseEvent) => {
     const id = onDownloadStart(program.name, version, size);
@@ -104,6 +114,11 @@ export const DownloadModal: React.FC<DownloadModalProps> = ({
   };
 
   const handleMediafireClick = (e: React.MouseEvent) => {
+    const id = onDownloadStart(program.name, version, size);
+    onDownloadProgress(id, 100, 'completed');
+  };
+
+  const handleGenericDownloadClick = (e: React.MouseEvent) => {
     const id = onDownloadStart(program.name, version, size);
     onDownloadProgress(id, 100, 'completed');
   };
@@ -157,73 +172,142 @@ export const DownloadModal: React.FC<DownloadModalProps> = ({
               {/* Interactive Download Servers Section */}
               <div className="space-y-3">
                 <p className="text-[11px] text-slate-400 text-center font-sans">
-                  Haz clic en cualquiera de los servidores para iniciar tu descarga:
+                  Haz clic en cualquiera de las opciones para iniciar tu descarga:
                 </p>
 
-                <div className="grid grid-cols-3 gap-3 max-w-md mx-auto">
-                  {/* MEGA Link (Red Glow) */}
-                  <a
-                    id="mega-download-button"
-                    href={megaUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={handleMegaClick}
-                    className="group relative flex flex-col items-center justify-center p-3 rounded-2xl bg-gradient-to-br from-red-500/5 via-transparent to-transparent border border-red-500/15 hover:border-red-500/50 hover:bg-red-500/[0.05] transition-all duration-300 shadow-sm hover:shadow-[0_0_15px_rgba(239,68,68,0.25)] cursor-pointer text-center"
-                  >
-                    <div className="absolute inset-4 rounded-full bg-red-500/5 filter blur-sm pointer-events-none group-hover:bg-red-500/10" />
-                    <img
-                      src="https://cdn.worldvectorlogo.com/logos/mega-icon.svg"
-                      alt="MEGA"
-                      className="w-10 h-10 object-contain relative z-10 transition-transform duration-300 group-hover:scale-108"
-                      referrerPolicy="no-referrer"
-                    />
-                    <span className="text-[10px] font-mono font-bold text-red-400 mt-2 uppercase tracking-wider relative z-10">
-                      MEGA
-                    </span>
-                  </a>
+                {isIdmOrFilmora ? (
+                  /* IDM and Filmora: MEGA, Google Drive, Mediafire */
+                  <div className="grid grid-cols-3 gap-3 max-w-md mx-auto">
+                    {/* MEGA Link (Red Glow) */}
+                    <a
+                      id="mega-download-button"
+                      href={megaUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={handleMegaClick}
+                      className="group relative flex flex-col items-center justify-center p-3 rounded-2xl bg-gradient-to-br from-red-500/5 via-transparent to-transparent border border-red-500/15 hover:border-red-500/50 hover:bg-red-500/[0.05] transition-all duration-300 shadow-sm hover:shadow-[0_0_15px_rgba(239,68,68,0.25)] cursor-pointer text-center"
+                    >
+                      <div className="absolute inset-4 rounded-full bg-red-500/5 filter blur-sm pointer-events-none group-hover:bg-red-500/10" />
+                      <img
+                        src="https://cdn.worldvectorlogo.com/logos/mega-icon.svg"
+                        alt="MEGA"
+                        className="w-10 h-10 object-contain relative z-10 transition-transform duration-300 group-hover:scale-108"
+                        referrerPolicy="no-referrer"
+                      />
+                      <span className="text-[10px] font-mono font-bold text-red-400 mt-2 uppercase tracking-wider relative z-10">
+                        MEGA
+                      </span>
+                    </a>
 
-                  {/* Google Drive Link (Green Glow) */}
-                  <a
-                    id="drive-download-button"
-                    href={driveUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={handleDriveClick}
-                    className="group relative flex flex-col items-center justify-center p-3 rounded-2xl bg-gradient-to-br from-emerald-500/5 via-transparent to-transparent border border-emerald-500/15 hover:border-emerald-500/50 hover:bg-emerald-500/[0.05] transition-all duration-300 shadow-sm hover:shadow-[0_0_15px_rgba(16,185,129,0.25)] cursor-pointer text-center"
-                  >
-                    <div className="absolute inset-4 rounded-full bg-emerald-500/5 filter blur-sm pointer-events-none group-hover:bg-emerald-500/10" />
-                    <img
-                      src="https://cloud.gmelius.com/public/logos/google/Google_Drive_Logo_512px.png"
-                      alt="Google Drive"
-                      className="w-10 h-10 object-contain relative z-10 transition-transform duration-300 group-hover:scale-108"
-                      referrerPolicy="no-referrer"
-                    />
-                    <span className="text-[10px] font-mono font-bold text-emerald-400 mt-2 uppercase tracking-wider relative z-10">
-                      Google Drive
-                    </span>
-                  </a>
+                    {/* Google Drive Link (Green Glow) */}
+                    <a
+                      id="drive-download-button"
+                      href={driveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={handleDriveClick}
+                      className="group relative flex flex-col items-center justify-center p-3 rounded-2xl bg-gradient-to-br from-emerald-500/5 via-transparent to-transparent border border-emerald-500/15 hover:border-emerald-500/50 hover:bg-emerald-500/[0.05] transition-all duration-300 shadow-sm hover:shadow-[0_0_15px_rgba(16,185,129,0.25)] cursor-pointer text-center"
+                    >
+                      <div className="absolute inset-4 rounded-full bg-emerald-500/5 filter blur-sm pointer-events-none group-hover:bg-emerald-500/10" />
+                      <img
+                        src="https://cloud.gmelius.com/public/logos/google/Google_Drive_Logo_512px.png"
+                        alt="Google Drive"
+                        className="w-10 h-10 object-contain relative z-10 transition-transform duration-300 group-hover:scale-108"
+                        referrerPolicy="no-referrer"
+                      />
+                      <span className="text-[10px] font-mono font-bold text-emerald-400 mt-2 uppercase tracking-wider relative z-10">
+                        Google Drive
+                      </span>
+                    </a>
 
-                  {/* Mediafire Link (Blue Glow) */}
-                  <a
-                    id="mediafire-download-button"
-                    href={mediafireUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={handleMediafireClick}
-                    className="group relative flex flex-col items-center justify-center p-3 rounded-2xl bg-gradient-to-br from-blue-500/5 via-transparent to-transparent border border-blue-500/15 hover:border-blue-500/50 hover:bg-blue-500/[0.05] transition-all duration-300 shadow-sm hover:shadow-[0_0_15px_rgba(59,130,246,0.25)] cursor-pointer text-center"
-                  >
-                    <div className="absolute inset-4 rounded-full bg-blue-500/5 filter blur-sm pointer-events-none group-hover:bg-blue-500/10" />
-                    <img
-                      src="https://images.seeklogo.com/logo-png/39/2/mediafire-logo-png_seeklogo-390015.png"
-                      alt="MediaFire"
-                      className="w-10 h-10 object-contain relative z-10 transition-transform duration-300 group-hover:scale-108"
-                      referrerPolicy="no-referrer"
-                    />
-                    <span className="text-[10px] font-mono font-bold text-blue-400 mt-2 uppercase tracking-wider relative z-10">
-                      MediaFire
-                    </span>
-                  </a>
-                </div>
+                    {/* Mediafire Link (Blue Glow) */}
+                    <a
+                      id="mediafire-download-button"
+                      href={mediafireUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={handleMediafireClick}
+                      className="group relative flex flex-col items-center justify-center p-3 rounded-2xl bg-gradient-to-br from-blue-500/5 via-transparent to-transparent border border-blue-500/15 hover:border-blue-500/50 hover:bg-blue-500/[0.05] transition-all duration-300 shadow-sm hover:shadow-[0_0_15px_rgba(59,130,246,0.25)] cursor-pointer text-center"
+                    >
+                      <div className="absolute inset-4 rounded-full bg-blue-500/5 filter blur-sm pointer-events-none group-hover:bg-blue-500/10" />
+                      <img
+                        src="https://images.seeklogo.com/logo-png/39/2/mediafire-logo-png_seeklogo-390015.png"
+                        alt="MediaFire"
+                        className="w-10 h-10 object-contain relative z-10 transition-transform duration-300 group-hover:scale-108"
+                        referrerPolicy="no-referrer"
+                      />
+                      <span className="text-[10px] font-mono font-bold text-blue-400 mt-2 uppercase tracking-wider relative z-10">
+                        MediaFire
+                      </span>
+                    </a>
+                  </div>
+                ) : isAdobe ? (
+                  /* Adobe Programs: Creative Cloud, GenP 4.2.1 */
+                  <div className="grid grid-cols-2 gap-3 max-w-sm mx-auto">
+                    {/* Adobe Creative Cloud Link */}
+                    <a
+                      id="creative-cloud-download-button"
+                      href={creativeCloudUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={handleGenericDownloadClick}
+                      className="group relative flex flex-col items-center justify-center p-3.5 rounded-2xl bg-gradient-to-br from-red-500/5 via-transparent to-transparent border border-red-500/15 hover:border-red-500/50 hover:bg-red-500/[0.05] transition-all duration-300 shadow-sm hover:shadow-[0_0_15px_rgba(239,68,68,0.25)] cursor-pointer text-center"
+                    >
+                      <div className="absolute inset-4 rounded-full bg-red-500/5 filter blur-sm pointer-events-none group-hover:bg-red-500/10" />
+                      <img
+                        src="/images/logos/Adobe Creative Cloud Logo.png"
+                        alt="Adobe Creative Cloud"
+                        className="w-10 h-10 object-contain relative z-10 transition-transform duration-300 group-hover:scale-108"
+                      />
+                      <span className="text-[10px] font-mono font-bold text-red-400 mt-2 uppercase tracking-tight relative z-10 leading-tight">
+                        Creative Cloud
+                      </span>
+                    </a>
+
+                    {/* GenP 4.2.1 Link */}
+                    <a
+                      id="genp-download-button"
+                      href={genpUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={handleGenericDownloadClick}
+                      className="group relative flex flex-col items-center justify-center p-3.5 rounded-2xl bg-gradient-to-br from-emerald-500/5 via-transparent to-transparent border border-emerald-500/15 hover:border-emerald-500/50 hover:bg-emerald-500/[0.05] transition-all duration-300 shadow-sm hover:shadow-[0_0_15px_rgba(16,185,129,0.25)] cursor-pointer text-center"
+                    >
+                      <div className="absolute inset-4 rounded-full bg-emerald-500/5 filter blur-sm pointer-events-none group-hover:bg-emerald-500/10" />
+                      <img
+                        src="/images/logos/GenP.png"
+                        alt="GenP 4.2.1"
+                        className="w-10 h-10 object-contain relative z-10 transition-transform duration-300 group-hover:scale-108"
+                      />
+                      <span className="text-[10px] font-mono font-bold text-emerald-400 mt-2 uppercase tracking-tight relative z-10 leading-tight">
+                        GenP 4.2.1
+                      </span>
+                    </a>
+                  </div>
+                ) : (
+                  /* Standard Programs: Mediafire Only */
+                  <div className="flex justify-center max-w-md mx-auto">
+                    <a
+                      id="mediafire-download-button"
+                      href={mediafireUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={handleMediafireClick}
+                      className="group relative flex flex-col items-center justify-center p-4 w-full max-w-xs rounded-2xl bg-gradient-to-br from-blue-500/5 via-transparent to-transparent border border-blue-500/15 hover:border-blue-500/50 hover:bg-blue-500/[0.05] transition-all duration-300 shadow-sm hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] cursor-pointer text-center"
+                    >
+                      <div className="absolute inset-4 rounded-full bg-blue-500/5 filter blur-sm pointer-events-none group-hover:bg-blue-500/10" />
+                      <img
+                        src="https://images.seeklogo.com/logo-png/39/2/mediafire-logo-png_seeklogo-390015.png"
+                        alt="MediaFire"
+                        className="w-12 h-12 object-contain relative z-10 transition-transform duration-300 group-hover:scale-108"
+                        referrerPolicy="no-referrer"
+                      />
+                      <span className="text-xs font-mono font-bold text-blue-400 mt-2.5 uppercase tracking-wider relative z-10">
+                        Descargar con MediaFire
+                      </span>
+                    </a>
+                  </div>
+                )}
               </div>
 
               {/* YouTube Promo Section */}

@@ -50,9 +50,7 @@ export const programsPart1: Program[] = [
         changelog: [
           'Se ha revertido al estado anterior a la versión 7.20 el método para eliminar ficheros de archivos sólidos para finalizar el arreglo en WinRAR 7.21 y evitar errores potenciales en la suma de control.'
         ],
-        downloadUrl: 'https://mega.nz/file/flZ3TQ7K#A6S9xnR0NFzPRoO4L2RhLdxdQD2Dq5ZNJHoTago-HSE',
-        megaUrl: 'https://mega.nz/file/flZ3TQ7K#A6S9xnR0NFzPRoO4L2RhLdxdQD2Dq5ZNJHoTago-HSE',
-        driveUrl: 'https://drive.google.com/file/d/1ggmJTFvbMwsCrDLoK5h4uE3UEreP3Ujb/view?usp=drive_link',
+        downloadUrl: 'https://www.mediafire.com/file/syvwba0ljwxlfun/WinRAR_7.23.rar/file',
         mediafireUrl: 'https://www.mediafire.com/file/syvwba0ljwxlfun/WinRAR_7.23.rar/file'
       }
     ],
